@@ -1,17 +1,23 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --main-color: #54A6C3
 }
 
-@media (prefers-color-scheme: dark) {
+/* @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
   }
+} */
+
+:root{
+  --quicksand: 'Quicksand', sans-serif;
 }
 
 html,
 body {
+  margin: 0;
   max-width: 100vw;
   overflow-x: hidden;
 }

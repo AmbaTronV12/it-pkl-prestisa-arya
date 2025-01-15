@@ -1,0 +1,59 @@
+/* Media query for 1440 x 1092 */
+
+@media (max-width: 1440px) {
+    .hero {
+        margin-bottom: 5rem;
+    }
+
+    .hero img {
+        max-width: 1200px;
+    }
+
+    .heroText {
+        top: 60%;
+    }
+
+    .hero h1 {
+        font-size: 1.8rem;
+        letter-spacing: 0.8rem;
+    }
+
+    .hero h2 {
+        font-size: 1.2rem;
+        letter-spacing: 0.15rem;
+    }
+
+    .collection {
+        width: 84%;
+    }
+}
+
+/* Media query for 1024 x 874 */
+
+@media (max-width: 1024px) {
+    .hero {
+        margin-bottom: 4rem;
+    }
+
+    .hero img {
+        max-width: 900px;
+    }
+
+    .heroText {
+        top: 60%;
+    }
+
+    .hero h1 {
+        font-size: 1.5rem;
+        letter-spacing: 0.6rem;
+    }
+
+    .hero h2 {
+        font-size: 1rem;
+        letter-spacing: 0.1rem;
+    }
+
+    .collection {
+        width: 90%;
+    }
+}
