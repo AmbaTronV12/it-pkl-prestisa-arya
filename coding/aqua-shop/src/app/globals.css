@@ -1,7 +1,7 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
-  --main-color: #54A6C3
+  --main-color: #54A6C3;
 }
 
 /* @media (prefers-color-scheme: dark) {
@@ -13,6 +13,7 @@
 
 :root{
   --quicksand: 'Quicksand', sans-serif;
+  --sans-serif: 'Microsoft Sans Serif', sans-serif;
 }
 
 html,
