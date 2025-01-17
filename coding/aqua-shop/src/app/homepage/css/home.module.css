@@ -312,3 +312,84 @@
     font-family: var(--sans-serif);
     color: #EAEAEA;
 }
+
+.newArrival{
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+}
+
+.newArrivalContent{
+    display: flex;
+    flex-direction: column;
+    align-self: center;
+    max-height: 36.75rem;
+}
+
+.newArrivalContent h3{
+    font-family: var(--quicksand);
+    font-weight: 600;
+    font-size: 2.75rem;
+    color: white;
+    letter-spacing: 0.55rem;
+    margin-bottom: 2rem;
+}
+
+.newArrivalProducts{
+    display: flex;
+    flex-direction: row;
+    height: 31.813rem;
+    max-width: 100%;
+    gap: 2rem;
+}
+
+.newArrivalHighlight{
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 23.125rem;
+    justify-content: flex-end;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+.highlightName{
+    font-family: var(--quicksand);
+    font-weight: 600;
+    font-size: 1.5rem;
+    max-width: 17.75rem;
+    letter-spacing: 0.256rem;
+    color: var(--main-color);
+    background-color: white;
+    padding: 0.5rem 0;
+    padding-left: 0.313rem;
+}
+
+.newArrivalOthers{
+    display: flex;
+    flex-direction: column;
+    gap: 1.875rem
+}
+
+.newArrivalCategory{
+    display: grid;
+    grid-template-columns: repeat(3,13.5rem);
+    gap: 2rem;
+    
+}
+
+.category{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 0.063rem solid white;
+}
+
+.newArrivalCategory p{
+    font-family: var(--quicksand);
+    font-weight: 600;
+    font-size: 1.125rem;
+    color: white;
+    letter-spacing: 0.225rem;
+    text-align: center;
+}
