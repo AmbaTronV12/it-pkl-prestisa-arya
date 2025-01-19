@@ -10,6 +10,9 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+  images: {
+    domains: ['static.thcdn.com'], // Corrected hostname without protocol
+  },
 };
 
 export default nextConfig;

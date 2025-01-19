@@ -1,10 +1,9 @@
 "use client"
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from './css/home.module.css'
-import { Navbar } from '@/component'
-import { heroImage, calebImage, zacImage } from '@/public/assets'
-import Image from 'next/image'
-import { useState, useEffect } from 'react';
+import { Navbar } from '@/component';
+import { heroImage, calebImage, zacImage, cartProductIcon } from '@/public/assets';
+import Image from 'next/image';
 
 interface Product {
   product_id: number;
@@ -49,8 +48,8 @@ const home = () => {
     fetchProducts();
   }, []);
 
-return (
-<div className={styles.page}>
+  return (
+    <div className={styles.page}>
   <Navbar></Navbar>
   <div className={styles.hero}>
     <Image src={heroImage} alt='hero' />
@@ -116,15 +115,18 @@ return (
         </p>
       </div>
     </div>
-    <div className={styles.newArrival}>
-      <div className={styles.newArrivalContent}>
-        <h3>NEW ARRIVALS</h3>
-        <div className={styles.newArrivalProducts}>
-          {product2 &&(
-          <div className={styles.newArrivalHighlight} 
-          style={{backgroundImage: `url(${product2.product_image.primary})`}}>
-          <p className={styles.highlightName}>{product2.product_name}</p>
-          </div>)}
+        <div className={styles.newArrival}>
+          <div className={styles.newArrivalContent}>
+            <h3>NEW ARRIVALS</h3>
+            <div className={styles.newArrivalProducts}>
+
+           {product1 && (
+                <div className={styles.newArrivalHighlight}>
+                  <Image src={product1.product_image.primary} alt={product1.product_name} layout='fill' objectFit='cover' className={styles.primary} />
+                  <Image src={product1.product_image.hover} alt={product1.product_name} layout='fill' objectFit='cover' className={styles.hover} />
+                  <p className={styles.highlightName}>{product1.product_name}</p>
+                </div>
+              )}
           <div className={styles.newArrivalOthers}>
             <div className={styles.newArrivalCategory}>
               <div className={styles.category}>
@@ -138,18 +140,56 @@ return (
               </div>
             </div>
             <div className={styles.newArrivalOtherProduct}>
-              <div></div> {/*id 1*/ }
-              <div></div> {/*id 2*/ }
-              <div></div> {/*id 3*/ }
+            {product2 && (
+                <div className={styles.product}>
+                  <div className={styles.imageContainer}>
+                    <Image src={product2.product_image.primary} alt={product2.product_name} layout='fill' objectFit='cover' className={styles.primary} />
+                    <Image src={product2.product_image.hover} alt={product2.product_name} layout='fill' objectFit='cover' className={styles.hover} />
+                  </div>
+                  <p className={styles.name}>{product2.product_name}</p>
+                  <p className={styles.price}>IDR{product2.product_price}</p>
+                  <div className={styles.button}>
+                    <button>BUY</button>
+                    <Image src={cartProductIcon} alt='cart' />
+                  </div>
+                </div>
+              )}
+              {product3 && (
+                <div className={styles.product}>
+                  <div className={styles.imageContainer}>
+                    <Image src={product3.product_image.primary} alt={product3.product_name} layout='fill' objectFit='cover' className={styles.primary} />
+                    <Image src={product3.product_image.hover} alt={product3.product_name} layout='fill' objectFit='cover' className={styles.hover} />
+                  </div>
+                  <p className={styles.name}>{product3.product_name}</p>
+                  <p className={styles.price}>IDR{product3.product_price}</p>
+                  <div className={styles.button}>
+                    <button>BUY</button>
+                    <Image src={cartProductIcon} alt='cart' />
+                  </div>
+                </div>
+              )}
+              {product4 && (
+                <div className={styles.product}>
+                  <div className={styles.imageContainer}>
+                    <Image src={product4.product_image.primary} alt={product4.product_name} layout='fill' objectFit='cover' className={styles.primary} />
+                    <Image src={product4.product_image.hover} alt={product4.product_name} layout='fill' objectFit='cover' className={styles.hover} />
+                  </div>
+                  <p className={styles.name}>{product4.product_name}</p>
+                  <p className={styles.price}>IDR{product4.product_price}</p>
+                  <div className={styles.button}>
+                    <button>BUY</button>
+                    <Image src={cartProductIcon} alt='cart' />
+                  </div>
+                </div>
+              )}
+            </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-
-  </div>
-</div>
-)
+    </div>
+  );
 }
 
 export default home

@@ -10,27 +10,49 @@ const dbConfig = {
     queueLimit: 0,
 };
 
-// Define the row structure by extending RowDataPacket
-interface Product extends RowDataPacket {
-    product_id: number;
-    product_name: string;
-    product_price: number;
-    product_image: string; // JSON string stored in the database
+interface Product {
+  product_id: number;
+  product_name: string;
+  product_price: number;
+  product_desc: string;
+  product_image: {
+    primary: string;
+    hover: string;
+    gallery: string[];
+  };
+  category: string;
+  subcategory: string;
+}
+
+// Define the row structure
+interface ProductRow extends RowDataPacket {
+  product_id: number;
+  product_name: string;
+  product_price: number;
+  product_desc: string;
+  product_image: string; // JSON string stored in the database
+  category: string;
+  subcategory: string;
 }
 
 // Function to fetch all products
 export async function getProducts(): Promise<Product[]> {
   try {
     const connection = await mysql.createConnection(dbConfig);
-    const [rows] = await connection.query<Product[]>(
-      `SELECT product_id, product_name, product_price, JSON_EXTRACT(product_image, '$') AS product_image  FROM product`
+    const [rows] = await connection.query<ProductRow[]>(
+      `SELECT product_id, product_name, product_price, product_desc, product_image, category, subcategory FROM product`
     );
     await connection.end();
 
-    // Parse JSON images for each row
+    // Transform rows into Product objects
     return rows.map((row) => ({
-      ...row,
-      product_image: JSON.parse(row.product_image), // Parse the JSON string into an object
+      product_id: row.product_id,
+      product_name: row.product_name,
+      product_price: row.product_price,
+      product_desc: row.product_desc,
+      product_image: JSON.parse(row.product_image), // Parse JSON string
+      category: row.category,
+      subcategory: row.subcategory,
     }));
   } catch (error) {
     console.error('Error fetching products:', error);
@@ -38,37 +60,81 @@ export async function getProducts(): Promise<Product[]> {
   }
 }
 
+// Function to fetch all products by category
+export async function getProductByCategory(category?: string, subcategory?: string): Promise<Product[]> {
+  try {
+    const connection = await mysql.createConnection(dbConfig);
+
+    let query = `SELECT product_id, product_name, product_price, product_desc, 
+                        JSON_EXTRACT(product_image, '$') AS product_image, 
+                        category, subcategory 
+                 FROM product`;
+    const params: any[] = [];
+
+    if (category || subcategory) {
+      query += ' WHERE';
+    }
+
+    if (category) {
+      query += ' category = ?';
+      params.push(category);
+    }
+
+    if (subcategory) {
+      query += category ? ' AND subcategory = ?' : ' subcategory = ?';
+      params.push(subcategory);
+    }
+
+    const [rows] = await connection.query<ProductRow[]>(query, params);
+    await connection.end();
+
+    // Parse JSON images for each row
+    return rows.map((row) => ({
+      ...row,
+      product_image: JSON.parse(row.product_image as string),
+    }));
+  } catch (error) {
+    console.error('Error fetching products by category:', error);
+    throw new Error('Failed to fetch products by category');
+  }
+}
+
 // Function to fetch a single product by ID
 export async function getProductById(productId: number): Promise<Product | null> {
-    try {
-      const connection = await mysql.createConnection(dbConfig);
-      const [rows] = await connection.query<Product[]>(
-        `SELECT product_id, product_name, product_price, JSON_EXTRACT(product_image, '$') AS product_image FROM product WHERE product_id = ?`,
-        [productId]
-      );
-      await connection.end();
-  
-      if (rows.length === 0) {
-        return null; // No product found
-      }
-  
-      const product = rows[0];
-      return {
-        ...product,
-        product_image: JSON.parse(product.product_image), // Parse the JSON string into an object or array
-      };
-    } catch (error) {
-      console.error('Error fetching product by ID:', error);
-      throw new Error('Failed to fetch product');
+  try {
+    const connection = await mysql.createConnection(dbConfig);
+    const [rows] = await connection.query<ProductRow[]>(
+      `SELECT * FROM product WHERE product_id = ?`,
+      [productId]
+    );
+    await connection.end();
+
+    if (rows.length === 0) {
+      return null; // No product found
     }
+
+    const row = rows[0];
+    return {
+      product_id: row.product_id,
+      product_name: row.product_name,
+      product_price: row.product_price,
+      product_desc: row.product_desc,
+      product_image: JSON.parse(row.product_image as string), // Parse the JSON string into an object
+      category: row.category,
+      subcategory: row.subcategory,
+    };
+  } catch (error) {
+    console.error('Error fetching product by ID:', error);
+    throw new Error('Failed to fetch product');
   }
+}
 
 
 // export default async function handler(req:NextApiRequest, res:NextApiResponse) {
 //     if(req.method === 'GET'){
 //         try{
 //             const connection = await mysql.createConnection(dbConfig); //nyambungin ke database
-//             const [rows] = await connection.execute('SELECT product_id, product_name, product_price, product_desc, product_image FROM product'); //ambil data dari tabel
+//             const [rows] = await connection.execute('`SELECT product_id, product_name, product_price, JSON_EXTRACT(product_image, '$') AS product_image FROM product'); //ambil data dari tabel
 //             await connection.end();
 //             res.status(200).json(rows);
 //         } catch (error) {

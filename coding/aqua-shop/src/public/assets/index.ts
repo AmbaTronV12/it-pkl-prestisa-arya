@@ -5,3 +5,4 @@ export {default as profileIcon} from './frame.svg';
 export {default as heroImage} from './Hero.png';
 export {default as calebImage} from './dresselV2.png';
 export {default as zacImage} from './zac.png';
+export {default as cartProductIcon} from './cartV2.svg';
