@@ -15,10 +15,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
-    const products = await getProductByCategory(category, subcategory as string | undefined);
+    let products = await getProductByCategory(category);
+
+    // Randomize product order
+    products = products.sort(() => Math.random() - 0.5);
+
     res.status(200).json(products);
   } catch (error) {
-    console.error('Error in /api/products/category:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    res.status(500).json({ error: 'Failed to fetch products' });
   }
 }
