@@ -1,8 +1,8 @@
 "use client"
 import React, { useState, useEffect } from 'react';
 import styles from './css/home.module.css'
-import { Navbar } from '@/component';
-import { heroImage, calebImage, zacImage, cartProductIcon } from '@/public/assets';
+import { Navbar, Footer } from '@/component';
+import { heroImage, calebImage, zacImage, cartProductIcon, XIcon, YoutubeIcon, facebookIcon, InstagramIcon } from '@/public/assets';
 import Image from 'next/image';
 
 interface Product {
@@ -55,14 +55,14 @@ const home = () => {
           return (
           <div className={styles.page}>
             <Navbar></Navbar>
-            <div className={styles.hero}>
+            <section className={styles.hero}>
               <Image src={heroImage} alt='hero' />
               <div className={styles.heroText}>
                 <h1>DIVE INTO EXCELLENCE</h1>
                 <h2>SHOP NOW</h2>
               </div>
-            </div>
-            <div className={styles.collection}>
+            </section>
+            <section className={styles.collection}>
               <div className={styles.collectionContainer}>
                 <h1>OUR COLLECTION</h1>
                 <div className={styles.collectionGrid}>
@@ -93,8 +93,8 @@ const home = () => {
                   </div>
                 </div>
               </div>
-            </div>
-            <div className={styles.extras}>
+            </section>
+            <section className={styles.extras}>
               <div className={styles.overflowTop}>
                 <div className={styles.extrasImage}>
                   <div className={styles.imagesDown}>
@@ -117,6 +117,7 @@ const home = () => {
                     Our mission is to enhance your swimming
                     experience with reliable, stylish, and durable products.
                   </p>
+                  <button>GET YOUR'S</button>
                 </div>
               </div>
               <div className={styles.newArrival}>
@@ -135,13 +136,13 @@ const home = () => {
                     )}
                     <div className={styles.newArrivalOthers}>
                       <div className={styles.newArrivalCategory}>
-                        <div className={styles.category}>
+                        <div onClick={() => handleCategoryChange('Men')} className={`${styles.category} ${category === 'Men' ? styles.active : ''}`}>
                           <p>MEN'S SWIMWEAR</p>
                         </div>
-                        <div className={styles.category}>
+                        <div  onClick={() => handleCategoryChange('Women')} className={`${styles.category} ${category === 'Women' ? styles.active : ''}`}>
                           <p>WOMEN'S SWIMWEAR</p>
                         </div>
-                        <div className={styles.category}>
+                        <div onClick={() => handleCategoryChange('Children')} className={`${styles.category} ${category === 'Children' ? styles.active : ''}`}>
                           <p>CHILDREN'S SWIMWEAR</p>
                         </div>
                       </div>
@@ -199,7 +200,39 @@ const home = () => {
                   </div>
                 </div>
               </div>
-            </div>
+              <div className={styles.discountcode}>
+                <div className={styles.discountcodeContainer}>
+                  <div className={styles.discountcodeOverflowContent}>
+                      <p className={styles.title}>ENTER YOUR DISCOUNT CODE</p>
+                      <p className={styles.desc}>Enter your code to get discount when you buy our product!</p>
+                      <div className={styles.InputContainer}>
+                        <div className={styles.codeBar}>
+                          <input type='text' placeholder='ENTER YOUR CODE HERE'className={styles.codeInput}/>
+                        </div>
+                        <button className={styles.codeButton}>REDEEM</button>
+                  </div>
+                  </div>
+                  <div className={styles.socialMedia}>
+                    <p>FOLLOW US :</p>
+                    <div className={styles.socialMediaLogo}>
+                      <div className={styles.socialMediaLogoContainer}>
+                        <Image src={XIcon} alt='X' />
+                      </div>
+                      <div className={styles.socialMediaLogoContainer}>
+                        <Image src={YoutubeIcon} alt='Youtube' />
+                      </div>
+                      <div className={styles.socialMediaLogoContainer}>
+                        <Image src={facebookIcon} alt='Facebook' />
+                      </div>
+                      <div className={styles.socialMediaLogoContainer}>
+                        <Image src={InstagramIcon} alt='Instagram' />
+                      </div>
+                    </div>
+                  </div>
+              </div>
+              </div>
+            </section>
+            <Footer></Footer>
           </div>
           );
           }

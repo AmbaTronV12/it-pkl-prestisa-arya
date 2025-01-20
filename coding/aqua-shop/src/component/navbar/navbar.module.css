@@ -1,11 +1,12 @@
 .navbar{
-    width: 100vw;
+    width: 100%;
     position: sticky;
+    top: 0;
     display: flex;
     flex-direction: column;
     align-items: center;
     margin: 0;
-    padding: 19px 0;
+    padding: 1.188rem 0;
     font-weight: 400;
     background-color: white;
     color: black
@@ -16,7 +17,7 @@
   }
 
   .navbar h2{
-    font-size: 16px;
+    font-size: 1rem;
   }
   
   .content1{
@@ -34,8 +35,8 @@
     align-items: center;
     background-color: #F6F6F6;
     border-radius: 4px;
-    padding: 8px 16px;
-    width: 470px; /* Adjust width as needed */
+    padding: 0.5rem 1rem;
+    width: 29.375rem; /* Adjust width as needed */
     grid-column: 3;
   }
   
@@ -43,8 +44,8 @@
     flex: 1;
     border: none;
     outline: none;
-    font-size: 16px;
-    padding: 10px;
+    font-size: 1rem;
+    padding: 0.625rem;
     padding-right: 0;
     background-color: #F6F6F6;
     color: #5E6268;
@@ -55,22 +56,26 @@
     flex-direction: row;
     align-items: center;
     justify-content: center;
-    gap: 37px;
+    gap: 2.313rem;
   }
 
   .Icon:hover{
     cursor: pointer;
     background-color: #ABABAB;
     border-radius: 20;
-    padding: 3px;
+    padding: 0.188rem;
   }
   
   .links{
     display: flex;
     flex-direction: row;
     justify-self: center;
-    gap: 30px;
-    padding: 10px;
+    gap: 1.875rem;
+    padding: 0.625rem;
+  }
+
+  .links h2{
+    cursor: pointer;
   }
   
   .signupOffer{
@@ -79,7 +84,7 @@
     justify-content: center;
     background-color: #5E6268;
     color: white;
-    padding: 10px 0;
+    padding: 0.625rem 0;
   }
   .signupOffer a{
     text-decoration: underline;
