@@ -1,4 +1,6 @@
 import mysql, { RowDataPacket } from 'mysql2/promise';
+import bcyrpt from 'bcrypt';
+import { hash } from 'crypto';
 //settingan buat connect
 const dbConfig = {
     host: process.env.DB_HOST,
@@ -129,6 +131,52 @@ export async function getProductById(productId: number): Promise<Product | null>
   }
 }
 
+
+// --- Authentication Functions ---
+
+// Hash a password
+export async function hashPassword(password: string): Promise<string> {
+  const saltRounds = 10;
+  return bcyrpt.hash(password, saltRounds);
+}
+
+// Compare a password with a hash
+export async function comparePassword(password: string, hash: string): Promise<boolean> {
+  return bcyrpt.compare(password, hash);
+}
+
+// Create a new user
+export async function createUser(username: string, email: string, passwordHash: string): Promise<void> {
+  try {
+    const connection = await mysql.createConnection(dbConfig);
+    const query = `
+      INSERT INTO users (username, email, password_hash)
+      VALUES (?, ?, ?)
+    `;
+    await connection.query(query, [username, email, passwordHash]);
+    await connection.end();
+  } catch (error) {
+    console.error('Error creating user:', error);
+    throw new Error('Failed to create user');
+  }
+}
+
+// Get user by email
+export async function getUserByEmail(email: string) {
+  try {
+    const connection = await mysql.createConnection(dbConfig);
+    const query = `
+      SELECT * FROM users WHERE email = ?
+    `;
+    const [rows] = await connection.query<RowDataPacket[]>(query, [email]);
+    await connection.end();
+
+    return rows.length > 0 ? rows[0] : null;
+  } catch (error) {
+    console.error('Error fetching user by email:', error);
+    throw new Error('Failed to fetch user');
+  }
+}
 
 // export default async function handler(req:NextApiRequest, res:NextApiResponse) {
 //     if(req.method === 'GET'){
