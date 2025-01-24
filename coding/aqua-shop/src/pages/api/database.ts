@@ -1,5 +1,5 @@
 import mysql, { RowDataPacket } from 'mysql2/promise';
-import bcyrpt from 'bcrypt';
+import bcrypt from 'bcrypt';
 import { hash } from 'crypto';
 //settingan buat connect
 const dbConfig = {
@@ -11,6 +11,12 @@ const dbConfig = {
     connectionLimit: 10, // Adjust as needed
     queueLimit: 0,
 };
+
+interface UserRow extends RowDataPacket {
+  id: number;
+  email: string;
+  password: string; // Ensure password is included here
+}
 
 interface Product {
   product_id: number;
@@ -137,13 +143,21 @@ export async function getProductById(productId: number): Promise<Product | null>
 // Hash a password
 export async function hashPassword(password: string): Promise<string> {
   const saltRounds = 10;
-  return bcyrpt.hash(password, saltRounds);
+  return bcrypt.hash(password, saltRounds);
 }
 
 // Compare a password with a hash
 export async function comparePassword(password: string, hash: string): Promise<boolean> {
-  return bcyrpt.compare(password, hash);
+  console.log('Password:', password);
+  console.log('Hash:', hash);
+
+  if (!password || !hash) {
+    throw new Error('Both password and hash must be provided.');
+  }
+
+  return bcrypt.compare(password, hash);
 }
+
 
 // Create a new user
 export async function createUser(username: string, email: string, passwordHash: string): Promise<void> {
@@ -165,10 +179,8 @@ export async function createUser(username: string, email: string, passwordHash: 
 export async function getUserByEmail(email: string) {
   try {
     const connection = await mysql.createConnection(dbConfig);
-    const query = `
-      SELECT * FROM users WHERE email = ?
-    `;
-    const [rows] = await connection.query<RowDataPacket[]>(query, [email]);
+    const query =  `SELECT user_id, email, password_hash FROM users WHERE email = ?`;
+    const [rows] = await connection.query<UserRow[]>(query, [email]);
     await connection.end();
 
     return rows.length > 0 ? rows[0] : null;
