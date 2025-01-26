@@ -1,0 +1,129 @@
+.page{
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+}
+
+.container{
+    display: flex;
+    flex-direction: row;
+    background-color:  #FBFAF5;
+    box-shadow: 0px 7px 14px rgba( 0, 0, 0, 0.2), 7px 0px 14px rgba( 0, 0, 0, 0.2);
+    padding: 1rem 1.25rem;
+    border-radius: 1rem;
+}
+
+.registerContent{
+    display: flex;
+    flex-direction: column;
+    padding: 4.813rem 7.125rem;
+    gap: 1.25rem;
+}
+
+.registerContent h1{
+    font-size: 2.375rem;
+    font-weight: bold;
+    font-family: var(--inter);
+}
+
+.registerForm{
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.registerForm p{
+    font-family: var(--roboto);
+    font-weight: 600;
+    padding: 0.25rem 0;
+    font-size: 1rem;
+}
+
+.inputBar{
+    display: flex;
+    align-items: center;
+    background-color: white;
+    border: 1px solid #E2E1E5;
+    border-radius: 5px;
+    padding: 0.5rem 1rem;
+    width: 27.688rem; /* Adjust width as needed */
+}
+
+.inputBar input{
+    flex: 1;
+    border: none;
+    outline: none;
+    font-size: 1rem;
+    padding: 0.625rem 0;
+    padding-right: 0;
+    background-color: white;
+    color: #D2D2D2;
+    font-family: var(--roboto);
+}
+
+.inputBar img{
+    cursor: pointer;
+}
+
+.inputBar img:hover{
+    opacity: 0.8;
+}
+
+.checkbox{
+    margin: 0 0.438rem;
+    vertical-align: middle;
+    cursor: pointer;
+}
+
+.term{
+    margin: 0 0.438rem;
+    vertical-align: middle;
+    font-family: var(--roboto);
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.term a{
+    color: var(--main-color);
+}
+
+.submit{
+    background-color: var(--main-color);
+    padding: 1rem 0;
+    border-radius: 4px;
+    border: none;
+    font-family: var(--quicksand);
+    font-weight: bold;
+    font-size: 1rem;
+}
+
+.error{
+    font-family: var(--roboto);
+    font-weight: 400;
+    padding: 0.25rem 0;
+    font-size: 0.875rem;
+    color: red;
+}
+.success{
+    font-family: var(--roboto);
+    font-weight: 400;
+    padding: 0.25rem 0;
+    font-size: 0.875rem;
+    color: green;
+}
+
+.changer{
+    font-family: var(--roboto);
+    font-weight: 500;
+    font-size: 0.875rem;
+    color: rgba( 0, 0, 0, 0.33);
+    align-self: center;
+}
+
+.changer span{
+    color: black;
+    cursor: pointer;
+}

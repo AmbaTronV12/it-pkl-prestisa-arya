@@ -1,3 +1,4 @@
+//homepage, navbar footer
 export {default as Logo} from './AquaShop.svg';
 export {default as seacrhIcon} from './Seacrh.svg';
 export {default as cartIcon} from './bag.svg';
@@ -13,3 +14,9 @@ export {default as XIcon} from './X.svg';
 export {default as YoutubeIcon} from './youtube.svg';
 export {default as facebookIcon} from './facebook.svg';
 export {default as InstagramIcon} from './instagram.svg';
+
+//register login
+export {default as registerImage} from './register.svg';
+export {default as loginImage} from './login.svg';
+export {default as toggleIcon} from './eye-slash.svg'
+export {default as toggleIcon1} from './eye.svg'

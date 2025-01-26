@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Quicksand } from "next/font/google";
+import { Geist, Geist_Mono, Quicksand, Inter, Roboto } from "next/font/google";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -16,6 +16,17 @@ const quicksand = Quicksand({
   subsets: ['latin'],
   weight: ['300', '400', '500', '600', '700'], // Specify the weights you need
   variable: '--font-quicksand', // Optional: define a CSS variable
+});
+const inter = Inter({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700'], // Adjust weights as needed
+  display: 'swap',
+});
+const roboto = Roboto({
+  subsets: ['latin'], // Ensure Latin subset is included
+  weight: ['400', '500', '700'], // Add desired font weights
+  style: ['normal', 'italic'], // Add styles if needed
+  display: 'swap', // Use 'swap' for better performance
 });
 
 export const metadata: Metadata = {

@@ -2,8 +2,14 @@ import React from "react";
 import Image from "next/image";
 import styles from './navbar.module.css'
 import { Logo, seacrhIcon, cartIcon, profileIcon } from "@/public/assets";
+import { useRouter } from 'next/navigation';
+
 
 const navbar = () => {
+   const router = useRouter();
+    const navigateToRegister = () => {
+      router.push("/register")
+    }
 return(
     <div className={styles.navbar}>
     <Image src={Logo} alt="Logo" className={styles.logo}/>
@@ -21,7 +27,7 @@ return(
             <Image src={cartIcon} alt="cart"/>
           </div>
           <div className={styles.Icon}>
-            <Image src={profileIcon} alt="profile"/>
+            <Image src={profileIcon} alt="profile" onClick={navigateToRegister}/>
           </div>
         </div>
     </div>
