@@ -16,6 +16,9 @@ interface UserRow extends RowDataPacket {
   id: number;
   email: string;
   password: string; // Ensure password is included here
+  birth_date: string | null;
+  phone_number: string | null;
+  shipping_address: string | null;
 }
 
 interface Product {
@@ -42,6 +45,53 @@ interface ProductRow extends RowDataPacket {
   category: string;
   subcategory: string;
 }
+
+
+// --- User Profile Functions ---
+
+// Fetch user by ID
+export async function getUserById(userId: number) {
+  try {
+    const connection = await mysql.createConnection(dbConfig);
+    const query = `SELECT username, email, birth_date, phone_number, shipping_address FROM users WHERE id = ?`;
+    const [rows] = await connection.query<UserRow[]>(query, [userId]);
+    await connection.end();
+
+    return rows.length > 0 ? rows[0] : null;
+  } catch (error) {
+    console.error('Error fetching user by ID:', error);
+    throw new Error('Failed to fetch user');
+  }
+}
+
+// Update user profile
+export async function updateUser(userId: number, updates: Partial<{ username: string; email: string; birth_date: string; phone_number: string; shipping_address: string; }>) {
+  try {
+    const connection = await mysql.createConnection(dbConfig);
+    
+    const fields = [];
+    const values = [];
+
+    for (const [key, value] of Object.entries(updates)) {
+      if (value !== undefined) {
+        fields.push(`${key} = ?`);
+        values.push(value);
+      }
+    }
+
+    if (fields.length === 0) return;
+
+    values.push(userId);
+    const query = `UPDATE users SET ${fields.join(', ')} WHERE id = ?`;
+    await connection.query(query, values);
+    await connection.end();
+  } catch (error) {
+    console.error('Error updating user profile:', error);
+    throw new Error('Failed to update user profile');
+  }
+}
+
+// --- Product Functions ---
 
 // Function to fetch all products
 export async function getProducts(): Promise<Product[]> {

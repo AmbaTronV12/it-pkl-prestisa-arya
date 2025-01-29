@@ -1,5 +1,6 @@
 "use client"
 import React from 'react'
+import { useAuth } from '@/app/context/authContext';
 import styles from './login.module.css'
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -7,6 +8,7 @@ import Image from 'next/image';
 import { loginImage, toggleIcon, toggleIcon1 } from '@/public/assets';
 
 const Register = () => {
+    const { login } = useAuth();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
@@ -38,11 +40,14 @@ const Register = () => {
           if (res.ok) {
             // Save token to local storage or cookie
             localStorage.setItem("token", data.token);
+            //AuthContext
+            login({ username: data.username });
             // Redirect to home or protected page
             router.push("/homepage");
           } else {
             setError(data.error || "Failed to log in. Please try again.");
           }
+
         } catch (err) {
           console.error("Login error:", err);
           setError("An unexpected error occurred.");

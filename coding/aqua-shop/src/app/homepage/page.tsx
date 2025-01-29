@@ -1,5 +1,6 @@
 "use client"
 import React, { useState, useEffect } from 'react';
+import { useAuth } from "@/app/context/authContext";
 import styles from './css/home.module.css'
 import { Navbar, Footer } from '@/component';
 import { heroImage, calebImage, zacImage, cartProductIcon, XIcon, YoutubeIcon, facebookIcon, InstagramIcon } from '@/public/assets';
@@ -17,6 +18,7 @@ gallery: string[];
 };
 
 const home = () => {
+  const { isLoggedIn, user, login, logout } = useAuth();
   const [products, setProducts] = useState<Product[]>([]);
   const [category, setCategory] = useState<string>('Men'); 
   const [product1, setProduct1] = useState<Product | null>(null);

@@ -1,6 +1,7 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+"use client"
 
-// Define the shape of the AuthContext
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+
 interface AuthContextType {
   isLoggedIn: boolean;
   user: { username: string } | null;
@@ -8,22 +9,31 @@ interface AuthContextType {
   logout: () => void;
 }
 
-// Create the context
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Create a provider component
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState<{ username: string } | null>(null);
 
+  useEffect(() => {
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+      setIsLoggedIn(true);
+    }
+  }, []);
+
   const login = (user: { username: string }) => {
-    setIsLoggedIn(true);
+    console.log('Logging in user:', user); // Debug login
     setUser(user);
+    setIsLoggedIn(true)
+    localStorage.setItem('user', JSON.stringify(user)); // Save user to localStorage
   };
 
   const logout = () => {
-    setIsLoggedIn(false);
     setUser(null);
+    setIsLoggedIn(false);
+    localStorage.removeItem('user'); // Clear localStorage on logout
   };
 
   return (
@@ -33,7 +43,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   );
 };
 
-// Hook for using the AuthContext
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {

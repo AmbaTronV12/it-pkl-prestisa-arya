@@ -1,4 +1,6 @@
+"use client"
 import React from "react";
+import { useAuth } from "@/app/context/authContext";
 import Image from "next/image";
 import styles from './navbar.module.css'
 import { Logo, seacrhIcon, cartIcon, profileIcon } from "@/public/assets";
@@ -6,9 +8,17 @@ import { useRouter } from 'next/navigation';
 
 
 const navbar = () => {
-   const router = useRouter();
-    const navigateToRegister = () => {
-      router.push("/register")
+    const router = useRouter();
+    const { isLoggedIn } = useAuth(); 
+
+    console.log('isLoggedIn:', isLoggedIn); // Debug the state
+
+    const profileIconClick = () => {
+      if (isLoggedIn) {
+        router.push('/profile'); 
+      } else {
+        router.push('/register');
+      }
     }
 return(
     <div className={styles.navbar}>
@@ -27,7 +37,7 @@ return(
             <Image src={cartIcon} alt="cart"/>
           </div>
           <div className={styles.Icon}>
-            <Image src={profileIcon} alt="profile" onClick={navigateToRegister}/>
+            <Image src={profileIcon} alt="profile" onClick={profileIconClick}/>
           </div>
         </div>
     </div>

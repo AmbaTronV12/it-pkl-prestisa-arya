@@ -1,4 +1,6 @@
+
 import type { Metadata } from "next";
+import { AuthProvider } from '@/app/context/authContext';
 import { Geist, Geist_Mono, Quicksand, Inter, Roboto } from "next/font/google";
 import "./globals.css";
 
@@ -45,7 +47,9 @@ export default function RootLayout({
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        {children}
+        <AuthProvider>
+          {children}
+        </AuthProvider>
       </body>
     </html>
   );
