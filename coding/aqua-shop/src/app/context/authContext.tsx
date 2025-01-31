@@ -1,11 +1,11 @@
-"use client"
+"use client";
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
 
 interface AuthContextType {
   isLoggedIn: boolean;
   user: { username: string } | null;
-  login: (user: { username: string }) => void;
+  login: (user: { username: string }, token: string) => void;
   logout: () => void;
 }
 
@@ -16,24 +16,46 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [user, setUser] = useState<{ username: string } | null>(null);
 
   useEffect(() => {
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-      setUser(JSON.parse(storedUser));
-      setIsLoggedIn(true);
+    const storedUser = localStorage.getItem("user");
+    const storedToken = localStorage.getItem("token");
+    const tokenExpiry = localStorage.getItem("tokenExpiry");
+
+    if (storedUser && storedToken && tokenExpiry) {
+      const expiryTime = parseInt(tokenExpiry, 10);
+      if (Date.now() > expiryTime) {
+        logout(); // Token expired, log out
+      } else {
+        setUser(JSON.parse(storedUser));
+        setIsLoggedIn(true);
+
+        // Set a timer to automatically log out when the token expires
+        const timeout = expiryTime - Date.now();
+        setTimeout(() => logout(), timeout);
+      }
     }
   }, []);
 
-  const login = (user: { username: string }) => {
-    console.log('Logging in user:', user); // Debug login
+  const login = (user: { username: string }, token: string) => {
+    console.log("Logging in user:", user);
+
     setUser(user);
-    setIsLoggedIn(true)
-    localStorage.setItem('user', JSON.stringify(user)); // Save user to localStorage
+    setIsLoggedIn(true);
+
+    const expiryTime = Date.now() + 60 * 60 * 1000; // 1 hour from now
+    localStorage.setItem("user", JSON.stringify(user));
+    localStorage.setItem("token", token);
+    localStorage.setItem("tokenExpiry", expiryTime.toString());
+
+    // Auto logout after one hour
+    setTimeout(() => logout(), 60 * 60 * 1000);
   };
 
   const logout = () => {
     setUser(null);
     setIsLoggedIn(false);
-    localStorage.removeItem('user'); // Clear localStorage on logout
+    localStorage.removeItem("user");
+    localStorage.removeItem("token");
+    localStorage.removeItem("tokenExpiry");
   };
 
   return (
@@ -46,7 +68,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
 };

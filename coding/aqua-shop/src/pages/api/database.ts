@@ -53,11 +53,16 @@ interface ProductRow extends RowDataPacket {
 export async function getUserById(userId: number) {
   try {
     const connection = await mysql.createConnection(dbConfig);
-    const query = `SELECT username, email, birth_date, phone_number, shipping_address FROM users WHERE id = ?`;
+    const query = `SELECT username, email, birth_date, phone_number FROM users WHERE user_id  = ?`;
     const [rows] = await connection.query<UserRow[]>(query, [userId]);
     await connection.end();
 
-    return rows.length > 0 ? rows[0] : null;
+    if (rows.length === 0) {
+      console.error(`User not found for ID: ${userId}`);
+      throw new Error('User not found');
+    }
+
+    return rows[0];
   } catch (error) {
     console.error('Error fetching user by ID:', error);
     throw new Error('Failed to fetch user');
@@ -65,7 +70,80 @@ export async function getUserById(userId: number) {
 }
 
 // Update user profile
-export async function updateUser(userId: number, updates: Partial<{ username: string; email: string; birth_date: string; phone_number: string; shipping_address: string; }>) {
+export async function updateUser(
+  userId: number,
+  updates: Partial<{ 
+    username: string; 
+    email: string; 
+    password_hash: string; // Add password hash
+    birth_date: string; 
+    phone_number: string; 
+    shipping_address: string; 
+  }>
+) {
+  try {
+    const connection = await mysql.createConnection(dbConfig);
+    
+    const fields = [];
+    const values = [];
+
+    for (const [key, value] of Object.entries(updates)) {
+      if (value !== undefined) {
+        fields.push(`${key} = ?`);
+        values.push(value);
+      }
+    }
+
+    if (fields.length === 0) {
+      console.log("⚠️ No fields to update");
+      return;
+    }
+
+    values.push(userId);
+    const query = `UPDATE users SET ${fields.join(', ')} WHERE user_id = ?`;
+
+    console.log("🔹 SQL Query:", query);
+    console.log("🔹 Values:", values);
+
+    const [result] = await connection.query(query, values);
+    await connection.end();
+
+    console.log("✅ Update Result:", result);
+
+  } catch (error) {
+    console.error('❌ Error updating user profile:', error);
+    throw new Error('Failed to update user profile');
+  }
+}
+
+export async function getShippingAddresses(userId: number) {
+  try {
+    const connection = await mysql.createConnection(dbConfig);
+    const [rows] = await connection.query(
+      `SELECT address_id , street_name, city, state, country, zip_code FROM shipping_addresses WHERE user_id = ?`,
+      [userId]
+    );
+    await connection.end();
+    return rows;
+  } catch (error) {
+    console.error('Error fetching shipping addresses:', error);
+    throw new Error('Failed to fetch shipping addresses');
+  }
+}
+
+export async function addShippingAddress(userId: number, street: string, city: string, state: string, country: string, zip_code: string) {
+  try {
+    const connection = await mysql.createConnection(dbConfig);
+    const query = `INSERT INTO shipping_addresses (user_id, street_name, city, state, country, zip_code) VALUES (?, ?, ?, ?, ?, ?)`;
+    await connection.query(query, [userId, street, city, state, country, zip_code]);
+    await connection.end();
+  } catch (error) {
+    console.error('Error adding shipping address:', error);
+    throw new Error('Failed to add shipping address');
+  }
+}
+
+export async function updateShippingAddress(addressId: number, updates: Partial<{ street: string; city: string; state: string; country: string; zip_code: string; }>) {
   try {
     const connection = await mysql.createConnection(dbConfig);
     
@@ -81,15 +159,29 @@ export async function updateUser(userId: number, updates: Partial<{ username: st
 
     if (fields.length === 0) return;
 
-    values.push(userId);
-    const query = `UPDATE users SET ${fields.join(', ')} WHERE id = ?`;
+    values.push(addressId);
+    const query = `UPDATE shipping_addresses SET ${fields.join(', ')} WHERE address_id = ?`;
     await connection.query(query, values);
     await connection.end();
   } catch (error) {
-    console.error('Error updating user profile:', error);
-    throw new Error('Failed to update user profile');
+    console.error('Error updating shipping address:', error);
+    throw new Error('Failed to update shipping address');
   }
 }
+
+
+export async function deleteShippingAddress(addressId: number) {
+  try {
+    const connection = await mysql.createConnection(dbConfig);
+    await connection.query(`DELETE FROM shipping_addresses WHERE address_id = ?`, [addressId]);
+    await connection.end();
+  } catch (error) {
+    console.error('Error deleting shipping address:', error);
+    throw new Error('Failed to delete shipping address');
+  }
+}
+
+
 
 // --- Product Functions ---
 

@@ -23,7 +23,7 @@ const navbar = () => {
 return(
     <div className={styles.navbar}>
     <Image src={Logo} alt="Logo" className={styles.logo}/>
-    <div className={styles.content1}>
+    <div className={styles.content1}> 
     <div className={styles.searchBar}>
           <input
             type="text"

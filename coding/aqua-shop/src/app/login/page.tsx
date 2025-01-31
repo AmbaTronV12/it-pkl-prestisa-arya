@@ -41,7 +41,7 @@ const Register = () => {
             // Save token to local storage or cookie
             localStorage.setItem("token", data.token);
             //AuthContext
-            login({ username: data.username });
+            login({ username: data.username }, data.token);
             // Redirect to home or protected page
             router.push("/homepage");
           } else {
