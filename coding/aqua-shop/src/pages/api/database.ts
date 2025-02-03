@@ -78,7 +78,8 @@ export async function updateUser(
     password_hash: string; // Add password hash
     birth_date: string; 
     phone_number: string; 
-    shipping_address: string; 
+    shipping_address: string;
+    profile_photo: string; 
   }>
 ) {
   try {
@@ -181,7 +182,61 @@ export async function deleteShippingAddress(addressId: number) {
   }
 }
 
+export async function updateUserProfilePhoto(userId: number, profilePhotoUrl: string) {
+  try {
+    const connection = await mysql.createConnection(dbConfig);
+    await connection.query('UPDATE users SET profile_photo = ? WHERE user_id = ?', [profilePhotoUrl, userId]);
+    await connection.end();
+  } catch (error) {
+    console.error('Error updating profile photo:', error);
+    throw new Error('Failed to update profile photo');
+  }
+}
 
+export async function addPaymentMethod(userId: number, paymentData: any) {
+  try {
+    const connection = await mysql.createConnection(dbConfig);
+    const query = `
+    INSERT INTO payment_methods (user_id, card_type, card_holder, card_number, expiration_date, cvv)
+    VALUES (?, ?, ?, ?, ?, ?)
+    `;
+
+  await connection.execute(query, [
+    userId,
+    paymentData.card_type,
+    paymentData.card_holder,  // Change this line from `cardholder_name` to `card_holder`
+    paymentData.card_number,
+    paymentData.expiration_date,
+    paymentData.cvv,
+  ]);
+
+    await connection.end();
+  } catch (error) {
+    console.error('Error adding payment method:', error);
+    throw new Error('Failed to add payment method');
+  }
+}
+
+// Update Payment Method
+export async function updatePaymentMethod(userId: number, updates: any) {
+  try {
+    const connection = await mysql.createConnection(dbConfig);
+
+    const fields = Object.keys(updates).map((key) => `${key} = ?`).join(', ');
+    const values = Object.values(updates);
+
+    if (fields.length === 0) return;
+
+    values.push(userId);
+    const query = `UPDATE payment_methods SET ${fields} WHERE user_id = ?`;
+
+    await connection.execute(query, values);
+    await connection.end();
+  } catch (error) {
+    console.error('Error updating payment method:', error);
+    throw new Error('Failed to update payment method');
+  }
+}
 
 // --- Product Functions ---
 
