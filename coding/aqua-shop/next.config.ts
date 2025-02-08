@@ -11,7 +11,7 @@ const nextConfig: NextConfig = {
     ];
   },
   images: {
-    domains: ['static.thcdn.com'], // Corrected hostname without protocol
+    domains: ['static.thcdn.com', 'static.vecteezy.com'], // Corrected hostname without protocol
   },
 };
 

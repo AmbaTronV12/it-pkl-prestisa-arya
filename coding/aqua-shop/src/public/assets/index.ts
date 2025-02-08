@@ -20,3 +20,7 @@ export {default as registerImage} from './register.svg';
 export {default as loginImage} from './login.svg';
 export {default as toggleIcon} from './eye-slash.svg'
 export {default as toggleIcon1} from './eye.svg'
+
+//profile
+export {default as emailIcon} from './sms.svg';
+export {default as phonebookIcon} from './external-drive.svg';

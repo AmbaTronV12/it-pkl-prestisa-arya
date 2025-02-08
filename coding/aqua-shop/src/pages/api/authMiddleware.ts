@@ -9,6 +9,7 @@ export interface AuthenticatedRequest extends NextApiRequest {
 // Middleware function to verify JWT
 export function verifyToken(req: AuthenticatedRequest, res: NextApiResponse, next: Function) {
   const authHeader = req.headers.authorization;
+  console.log('Authorization Header:', authHeader); // Log the header value
 
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
     return res.status(401).json({ error: 'Unauthorized: No token provided' });
@@ -21,6 +22,7 @@ export function verifyToken(req: AuthenticatedRequest, res: NextApiResponse, nex
     req.user = decoded; // Attach user data to the request
     next(); // Proceed to the next function
   } catch (error) {
+    console.error('JWT Verification Error:', error); // Log error for debugging
     return res.status(403).json({ error: 'Forbidden: Invalid or expired token' });
   }
 }
