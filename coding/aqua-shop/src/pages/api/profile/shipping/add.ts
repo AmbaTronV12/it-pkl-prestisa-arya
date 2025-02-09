@@ -10,12 +10,12 @@ export default async function handler(req: AuthenticatedRequest, res: NextApiRes
           return res.status(401).json({ error: 'Unauthorized' });
         }
 
-        const { street, city, state, country, zip_code } = req.body;
-        if (!street || !city || !state || !country || !zip_code) {
+        const { street_name, city, state, country, zip_code } = req.body;
+        if (!street_name || !city || !state || !country || !zip_code) {
           return res.status(400).json({ error: 'All address fields are required' });
         }
 
-        await addShippingAddress(req.user.id, street, city, state, country, zip_code);
+        await addShippingAddress(req.user.id, street_name, city, state, country, zip_code);
         res.status(201).json({ message: 'Shipping address added successfully' });
       } catch (error) {
         console.error('Error adding shipping address:', error);

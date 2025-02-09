@@ -38,6 +38,12 @@
     border: 1px solid #C1C1C1;
 }
 
+.profile2{
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
 .profile1 h4{
     font-family: var(--sans-serif);
     font-size: 1rem;
@@ -46,6 +52,41 @@
     font-weight: 600;
     margin-top: 1rem;
     margin-bottom: 1.813rem;
+}
+
+.dataWrapper{
+    margin-top: 0.875rem;
+    
+}
+
+.dataWrapper p{
+    font-family: var(--sans-serif);
+    color: black;
+    font-size: 1rem;
+    letter-spacing: 0.169rem;
+    font-weight: 600;
+    margin-bottom: 1.125rem;
+}
+
+.dataContainer{
+    display: flex;
+    width: 14.688rem;
+    justify-content: space-between;
+}
+
+.label{
+    font-family: var(--sans-serif);
+    font-size: 0.75rem;
+    color: #5A5A5A;
+    letter-spacing: 0.125rem;
+
+}
+.value{
+    font-family: var(--sans-serif);
+    font-size: 0.75rem;
+    color: black;
+    font-weight: 500;
+    letter-spacing: 0.125rem;
 }
 
 .profilePhoto{
@@ -58,4 +99,37 @@
     display: flex;
     flex-direction: row;
     gap: 0.625rem;
+}
+
+.accountData{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: 1px solid #C1C1C1;
+}
+
+.shippingAddress{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: 1px solid #C1C1C1;
+}
+
+.wrapperAdjuster1{
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 3.375rem;
+}
+
+.wrapperAdjuster2{ 
+    margin-bottom: 3.375rem;
+}
+
+.wrapperAdjuster2 .adjuster{
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
 }

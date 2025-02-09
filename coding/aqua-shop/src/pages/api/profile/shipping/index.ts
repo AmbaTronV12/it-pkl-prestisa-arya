@@ -11,7 +11,14 @@ export default async function handler(req: AuthenticatedRequest, res: NextApiRes
         }
 
         const addresses = await getShippingAddresses(req.user.id);
-        res.status(200).json(addresses);
+
+        if (Array.isArray(addresses) && addresses.length > 0) {
+          console.log("Fetched addresses from DB:", addresses);
+          return res.status(200).json(addresses);
+        }
+
+        console.log("No addresses found for this user.");
+        res.status(200).json([]);  // Return an empty array if no addresses found
       } catch (error) {
         console.error('Error fetching shipping addresses:', error);
         res.status(500).json({ error: 'Failed to fetch shipping addresses' });

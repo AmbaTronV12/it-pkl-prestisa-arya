@@ -121,22 +121,30 @@ export async function getShippingAddresses(userId: number) {
   try {
     const connection = await mysql.createConnection(dbConfig);
     const [rows] = await connection.query(
-      `SELECT address_id , street_name, city, state, country, zip_code FROM shipping_addresses WHERE user_id = ?`,
+      `SELECT address_id, street_name, city, state, country, zip_code 
+       FROM shipping_addresses 
+       WHERE user_id = ?`,
       [userId]
     );
     await connection.end();
-    return rows;
+
+    // Check if rows are returned, otherwise return an empty array
+    if (Array.isArray(rows) && rows.length > 0) {
+      return rows;  // Return the shipping addresses
+    } else {
+      return [];  // Return an empty array if no addresses
+    }
   } catch (error) {
     console.error('Error fetching shipping addresses:', error);
     throw new Error('Failed to fetch shipping addresses');
   }
 }
 
-export async function addShippingAddress(userId: number, street: string, city: string, state: string, country: string, zip_code: string) {
+export async function addShippingAddress(userId: number, street_name: string, city: string, state: string, country: string, zip_code: string) {
   try {
     const connection = await mysql.createConnection(dbConfig);
     const query = `INSERT INTO shipping_addresses (user_id, street_name, city, state, country, zip_code) VALUES (?, ?, ?, ?, ?, ?)`;
-    await connection.query(query, [userId, street, city, state, country, zip_code]);
+    await connection.query(query, [userId, street_name, city, state, country, zip_code]);
     await connection.end();
   } catch (error) {
     console.error('Error adding shipping address:', error);

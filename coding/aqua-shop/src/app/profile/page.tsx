@@ -9,6 +9,7 @@ import { emailIcon, phonebookIcon } from '@/public/assets';
 
 const Profile = () => {
   const { user, login, isLoggedIn } = useAuth();
+  const [shippingAddresses, setShippingAddresses] = useState<any[]>([]);
   const [profileData, setProfileData] = useState<any>(null);
   const [photoUrl, setPhotoUrl] = useState(user?.profile_photo || "https://static.vecteezy.com/system/resources/previews/009/292/244/large_2x/default-avatar-icon-of-social-media-user-vector.jpg");
   const [isEditing, setIsEditing] = useState(false);
@@ -51,6 +52,31 @@ const Profile = () => {
   
     fetchUserProfile();
   }, [isLoggedIn]);
+
+  useEffect(() => {
+    const fetchShippingAddresses = async () => {
+      if (isLoggedIn) {
+        try {
+          const response = await fetch("/api/profile/shipping", {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          });
+          const data = await response.json();
+          console.log("Fetched shipping addresses:", data);  // Check the response here
+          if (response.ok && data.length > 0) {
+            setShippingAddresses(data);
+          } else {
+            console.error("No shipping addresses found.");
+          }
+        } catch (error) {
+          console.error("Error fetching shipping addresses:", error);
+        }
+      }
+    };
+    fetchShippingAddresses();
+  }, [isLoggedIn]);
+  
 
   // Handle file change for photo upload
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -110,7 +136,7 @@ const Profile = () => {
                   width={239}
                   height={212}
                 />
-                <h4>{profileData?.username || "User Name"}</h4>
+                <h4>{profileData?.username || "N/A"}</h4>
                 <div>
                 <div className={styles.profileIcon}>
                   <Image src={emailIcon} alt="email" />
@@ -125,7 +151,61 @@ const Profile = () => {
               </>
             )}
           </div>
-          <div className={styles.profile2}></div>
+          <div className={styles.profile2}>
+            <div className={styles.accountData}>
+              <div className={styles.dataWrapper}>
+              <p>Account Data</p>
+              <div className={styles.wrapperAdjuster1}>
+              <div className={styles.dataContainer}>
+                <span className={styles.label}>Username</span>
+                <span className={styles.value}>{profileData?.username || "N/A"}</span>
+              </div>
+              <div className={styles.dataContainer}>
+                <span className={styles.label}>Birth Date</span>
+                <span className={styles.value}>{profileData?.birth_date ? new Date(profileData.birth_date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : "N/A"}</span>
+              </div>
+              </div>
+              </div>
+              <div className={styles.editButton}>Edit</div>
+            </div>
+            <div className={styles.shippingAddress}>
+              <div className={styles.dataWrapper}>
+                <p>Shipping Address</p>
+                {shippingAddresses.length > 0 ? (
+                <div className={styles.wrapperAdjuster2}>
+                   {shippingAddresses.map((address, index) => (
+                    <div key={index} className={styles.adjuster}>
+                      <div className={styles.dataContainer}>
+                        <span className={styles.label}>Address</span>
+                        <span className={styles.value}>{address.street_name || "N/A"}</span>
+                      </div>
+                      <div className={styles.dataContainer}>
+                        <span className={styles.label}>City</span>
+                        <span className={styles.value}>{address.city || "N/A"}</span>
+                      </div>
+                      <div className={styles.dataContainer}>
+                        <span className={styles.label}>State</span>
+                        <span className={styles.value}>{address.state || "N/A"}</span>
+                      </div>
+                      <div className={styles.dataContainer}>
+                        <span className={styles.label}>Country</span>
+                        <span className={styles.value}>{address.country || "N/A"}</span>
+                      </div>
+                      <div className={styles.dataContainer}>
+                        <span className={styles.label}>Zip Code</span>
+                        <span className={styles.value}>{address.zip_code || "N/A"}</span>
+                      </div>
+                    </div>
+
+                   ))}
+                </div>
+                ):(
+                  <p>No shipping addresses found.</p>
+                )}
+              </div>
+              <div className={styles.editButton}>Edit</div>
+            </div>
+          </div>
           <div className={styles.profile3}></div>
         </div>
       </div>
