@@ -24,3 +24,5 @@ export {default as toggleIcon1} from './eye.svg'
 //profile
 export {default as emailIcon} from './sms.svg';
 export {default as phonebookIcon} from './external-drive.svg';
+export {default as cardIcon} from './card.svg';
+export {default as cardIcon2} from './card2.svg';

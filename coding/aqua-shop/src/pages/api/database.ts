@@ -246,6 +246,28 @@ export async function updatePaymentMethod(userId: number, updates: any) {
   }
 }
 
+// Display Payment Method
+export async function getPaymentMethod(userId: number) {
+  try {
+    const connection = await mysql.createConnection(dbConfig);
+    
+    const [rows] = await connection.query<RowDataPacket[]>(
+      `SELECT card_type, card_holder, card_number, expiration_date, cvv
+       FROM payment_methods WHERE user_id = ?`, 
+      [userId]
+    );
+    
+    await connection.end();
+
+    return rows.length > 0 ? rows[0] : null; // 'rows' is now recognized as an array
+  } catch (error) {
+    console.error('Error fetching payment method:', error);
+    throw new Error('Failed to fetch payment method');
+  }
+}
+
+
+
 // --- Product Functions ---
 
 // Function to fetch all products

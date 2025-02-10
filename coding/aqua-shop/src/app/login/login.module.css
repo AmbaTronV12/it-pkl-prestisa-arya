@@ -98,6 +98,7 @@
     font-family: var(--quicksand);
     font-weight: bold;
     font-size: 1rem;
+    cursor: pointer;
 }
 
 .error{

@@ -11,7 +11,7 @@ export default async function handler(req: AuthenticatedRequest, res: NextApiRes
         }
 
         const userId = req.user.id;
-        const { card_type, cardholder_name, card_number, expiration_date, cvv, billing_address } = req.body;
+        const { card_type, cardholder_name, card_number, expiration_date, cvv } = req.body;
 
         const updates = {
           ...(card_type && { card_type }),
@@ -19,7 +19,6 @@ export default async function handler(req: AuthenticatedRequest, res: NextApiRes
           ...(card_number && { card_number }),
           ...(expiration_date && { expiration_date }),
           ...(cvv && { cvv }),
-          ...(billing_address && { billing_address }),
         };
 
         if (Object.keys(updates).length === 0) {

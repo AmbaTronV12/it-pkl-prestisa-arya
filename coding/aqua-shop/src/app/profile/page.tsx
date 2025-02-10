@@ -5,10 +5,11 @@ import styles from './profile.module.css';
 import { NavbarProfile, Sidebar } from '@/component';
 import { useAuth } from '../context/authContext';
 import Image from 'next/image';
-import { emailIcon, phonebookIcon } from '@/public/assets';
+import { emailIcon, phonebookIcon, cardIcon, cardIcon2 } from '@/public/assets';
 
 const Profile = () => {
   const { user, login, isLoggedIn } = useAuth();
+  const [paymentMethod, setPaymentMethod] = useState<any>(null);
   const [shippingAddresses, setShippingAddresses] = useState<any[]>([]);
   const [profileData, setProfileData] = useState<any>(null);
   const [photoUrl, setPhotoUrl] = useState(user?.profile_photo || "https://static.vecteezy.com/system/resources/previews/009/292/244/large_2x/default-avatar-icon-of-social-media-user-vector.jpg");
@@ -63,7 +64,6 @@ const Profile = () => {
             },
           });
           const data = await response.json();
-          console.log("Fetched shipping addresses:", data);  // Check the response here
           if (response.ok && data.length > 0) {
             setShippingAddresses(data);
           } else {
@@ -77,6 +77,55 @@ const Profile = () => {
     fetchShippingAddresses();
   }, [isLoggedIn]);
   
+  useEffect(() => {
+    const fetchPaymentMethod = async () => {
+      if (isLoggedIn) {
+        try {
+          const response = await fetch("/api/profile/payment", {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          });
+          const data = await response.json();
+          console.log("Fetched payment method:", data);  // Log the fetched data
+  
+          if (response.ok) {
+            setPaymentMethod(data);
+          } else {
+            console.error("Failed to fetch payment method");
+            setPaymentMethod(null);
+          }
+        } catch (error) {
+          console.error("Error fetching payment method:", error);
+          setPaymentMethod(null);  // Set to null in case of error
+        }
+      }
+    };
+  
+    fetchPaymentMethod();
+  }, [isLoggedIn]);
+  
+  const getCardLogo = (cardType: string | null | undefined) => {
+    if (!cardType) return cardIcon; // Return a default icon if cardType is null or undefined
+    
+    const normalizedCardType = cardType.toLowerCase().replace(/\s+/g, ''); // Normalize the card type string
+    
+    if (normalizedCardType.includes("visa")) return cardIcon2;  // Return the Visa icon
+    if (normalizedCardType.includes("master")) return cardIcon; // Return the MasterCard icon
+  
+    return cardIcon; // Default fallback icon if the card type doesn't match known types
+  };
+
+  const formatCardNumber = (cardNumber: string) => {
+    const maskedNumber = cardNumber.slice(-4); // Get only the last 4 digits
+    return `•••• •••• •••• ${maskedNumber}`;
+  };
+  
+  const formatExpirationDate = (date: string) => {
+    const dateObj = new Date(date);
+    const options: Intl.DateTimeFormatOptions = { month: '2-digit', year: '2-digit' }; // Format month and year
+    return dateObj.toLocaleDateString('en-US', options); // Returns date like "10/28"
+  };
 
   // Handle file change for photo upload
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -117,7 +166,7 @@ const Profile = () => {
       setIsUploading(false);
     }
   };
-
+  console.log(getCardLogo(paymentMethod?.card_type));  // Check what URL is being returned
   return (
     <div className={styles.page}>
       <NavbarProfile />
@@ -206,7 +255,64 @@ const Profile = () => {
               <div className={styles.editButton}>Edit</div>
             </div>
           </div>
-          <div className={styles.profile3}></div>
+          <div className={styles.profile3}>
+            <div className={styles.paymentMethod}>
+              <div className={styles.dataWrapper}>
+                <p>Payment Method</p>
+                
+                {paymentMethod ? (
+                  <div
+                  className={`${styles.cardImage} ${paymentMethod?.card_type?.toLowerCase().includes('visa') ? styles.visa : styles.master}`}
+                > 
+                  <div className={styles.cardContainer}>
+                  <p> {paymentMethod?.card_number ? formatCardNumber(paymentMethod?.card_number) : "N/A"}</p>
+                  
+                  <div className={styles.cardInfo}>
+                    <div className={styles.cardData}>
+                      <span className={styles.datalabel}>Card Holder Name</span>
+                      <span className={styles.data}>{paymentMethod?.card_holder || "N/A"}</span>
+                    </div>
+                    <div className={styles.cardData}>
+                      <span className={styles.datalabel}>Expired Date</span>
+                      <span className={styles.data}>{formatExpirationDate(paymentMethod?.expiration_date || "N/A")}</span>
+                    </div>
+                  </div>
+                  </div>
+                </div>
+                 ) : paymentMethod === null ? (
+                  <p>No payment method found.</p>
+                ) : (
+                  <p>Loading payment method...</p>
+                )}
+                
+              </div>
+            </div>
+            <div className={styles.paymentMethod2}>
+              <div className={styles.wrapperAdjuster3}>
+                <div className={styles.dataContainer}>
+                  <span className={styles.label}>Card Type</span>
+                  <span className={styles.value}>{paymentMethod?.card_type || "N/A"}</span>
+                </div>
+                <div className={styles.dataContainer}>
+                  <span className={styles.label}>Card Holder</span>
+                  <span className={styles.value}>{paymentMethod?.card_holder || "N/A"}</span>
+                </div>
+                <div className={styles.dataContainer}>
+                  <span className={styles.label}>Expire</span>
+                  <span className={styles.value}>{formatExpirationDate(paymentMethod?.expiration_date || "N/A")}</span>
+                </div>
+                <div className={styles.dataContainer}>
+                  <span className={styles.label}>Card Holder</span>
+                  <span className={styles.value}>{paymentMethod?.card_holder || "N/A"}</span>
+                </div>
+                <div className={styles.dataContainer}>
+                  <span className={styles.label}>Card Number</span>
+                  <span className={styles.value}> {paymentMethod?.card_number ? formatCardNumber(paymentMethod?.card_number) : "N/A"}</span>
+                </div>
+              </div>
+              <div className={styles.editButton}>Edit</div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

@@ -10,6 +10,7 @@ import { loginImage, toggleIcon, toggleIcon1 } from '@/public/assets';
 const Register = () => {
     const { login } = useAuth();
     const [email, setEmail] = useState("");
+    const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
     const router = useRouter();
@@ -25,7 +26,7 @@ const Register = () => {
 
       const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-    
+      
         try {
           const res = await fetch("/api/auth/login", {
             method: "POST",
@@ -34,20 +35,25 @@ const Register = () => {
             },
             body: JSON.stringify({ email, password }),
           });
-    
+      
           const data = await res.json();
-    
+      
           if (res.ok) {
             // Save token to local storage or cookie
             localStorage.setItem("token", data.token);
-            //AuthContext
-            login({ username: data.username }, data.token);
+            // Update login with all user properties
+            login({
+              username: data.username,
+              email: data.email,
+              phone_number: data.phone_number,
+              birth_date: data.birth_date,
+              profile_photo: data.profile_photo, // Add any additional data here
+            }, data.token);
             // Redirect to home or protected page
             router.push("/homepage");
           } else {
             setError(data.error || "Failed to log in. Please try again.");
           }
-
         } catch (err) {
           console.error("Login error:", err);
           setError("An unexpected error occurred.");
@@ -59,7 +65,7 @@ const Register = () => {
         <div className={styles.container}>
             <Image src={loginImage} alt='registerImage'/>
             <div className={styles.registerContent}>
-                <h1>Hi, Let's Make Your<br/> Account First</h1>
+                <h1>Welcome Back!</h1>
                 <form onSubmit={handleSubmit} className={styles.registerForm}>
                     <div className={styles.inputContainer}>
                     <p>Email</p>
