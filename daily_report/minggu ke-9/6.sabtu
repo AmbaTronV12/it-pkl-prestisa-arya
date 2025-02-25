@@ -1,0 +1,6 @@
+yang dilakukan: melakukan debug pada foto profile
+yang dipahami: 
+kendala: foto profile hilang saat user login ulang
+solusi: melakukan perubahan pada function url yang bertanggung jawab untuk mengambil url yang benar
+
+21/02/2025

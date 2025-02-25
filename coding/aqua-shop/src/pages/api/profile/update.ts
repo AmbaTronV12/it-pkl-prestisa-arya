@@ -22,7 +22,7 @@ export default async function handler(req: AuthenticatedRequest, res: NextApiRes
       }
 
       const userId = req.user.id;
-      const { username, email, password, birth_date, phone_number, shipping_address } = req.body;
+      const { username, email, password, birth_date, phone_number } = req.body;
       console.log("🔹 Update request for user ID:", userId);
 
       let passwordHash: string | undefined;
@@ -32,7 +32,7 @@ export default async function handler(req: AuthenticatedRequest, res: NextApiRes
         passwordHash = await bcrypt.hash(password, saltRounds);
       }
 
-      const updates: any = { username, email, birth_date, phone_number, shipping_address };
+      const updates: any = { username, email, birth_date, phone_number };
       if (passwordHash) {
         updates.password_hash = passwordHash;
       }
@@ -41,7 +41,9 @@ export default async function handler(req: AuthenticatedRequest, res: NextApiRes
       await updateUser(userId, updates);
       console.log("✅ Update successful!");
 
-      res.status(200).json({ message: 'Profile updated successfully' });
+      res.status(200).json({ message: 'Profile updated successfully',
+        user: updateUser,
+       });
     });
   } catch (error) {
     console.error('❌ Error updating profile:', error);

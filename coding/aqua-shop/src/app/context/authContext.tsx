@@ -34,10 +34,14 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         logout(); // Token expired, log out
         console.log("Token expired, logging out...");
       } else {
-        setUser(JSON.parse(storedUser));
+        const parsedUser = JSON.parse(storedUser);
+        // Ensure profile_photo is loaded correctly
+        parsedUser.profile_photo = localStorage.getItem("profile_photo") || parsedUser.profile_photo;
+
+        setUser(parsedUser);
         setIsLoggedIn(true);
-  
-        // Set a timer to automatically log out when the token expires
+
+        // Auto-logout when token expires
         const timeout = expiryTime - Date.now();
         setTimeout(() => logout(), timeout);
       }
@@ -47,24 +51,37 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const login = (user: UserType, token: string) => {
     console.log("Logging in user:", user);
   
-    setUser(user);
+    // Properly format the profile photo URL
+    const updatedUser = {
+      ...user,
+      profile_photo: user.profile_photo?.startsWith("/uploads/")
+        ? `${process.env.NEXT_PUBLIC_BASE_URL}${user.profile_photo}`
+        : user.profile_photo || "https://static.vecteezy.com/system/resources/previews/009/292/244/large_2x/default-avatar-icon-of-social-media-user-vector.jpg",
+    };
+  
+    // Save to localStorage
+    localStorage.setItem("profile_photo", updatedUser.profile_photo);
+    localStorage.setItem("user", JSON.stringify(updatedUser));
+    localStorage.setItem("token", token);
+  
+    setUser(updatedUser);
     setIsLoggedIn(true);
   
     const expiryTime = Date.now() + 60 * 60 * 1000; // 1 hour from now
-    localStorage.setItem("user", JSON.stringify(user));
-    localStorage.setItem("token", token);
     localStorage.setItem("tokenExpiry", expiryTime.toString());
   
     // Auto logout after one hour
     setTimeout(() => logout(), 60 * 60 * 1000);
   };
-
+  
+  
   const logout = () => {
     setUser(null);
     setIsLoggedIn(false);
     localStorage.removeItem("user");
     localStorage.removeItem("token");
     localStorage.removeItem("tokenExpiry");
+    localStorage.removeItem("profile_photo");
   };
 
   return (

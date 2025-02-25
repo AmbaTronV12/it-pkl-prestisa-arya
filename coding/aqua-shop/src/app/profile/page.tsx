@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import styles from './profile.module.css';
 import { NavbarProfile, Sidebar } from '@/component';
+import Link from "next/link";
 import { useAuth } from '../context/authContext';
 import Image from 'next/image';
 import { emailIcon, phonebookIcon, cardIcon, cardIcon2 } from '@/public/assets';
@@ -12,7 +13,8 @@ const Profile = () => {
   const [paymentMethod, setPaymentMethod] = useState<any>(null);
   const [shippingAddresses, setShippingAddresses] = useState<any[]>([]);
   const [profileData, setProfileData] = useState<any>(null);
-  const [photoUrl, setPhotoUrl] = useState(user?.profile_photo || "https://static.vecteezy.com/system/resources/previews/009/292/244/large_2x/default-avatar-icon-of-social-media-user-vector.jpg");
+  const [photoUrl, setPhotoUrl] = useState(user?.profile_photo?.startsWith("/uploads/")
+  ? user.profile_photo:"https://static.vecteezy.com/system/resources/previews/009/292/244/large_2x/default-avatar-icon-of-social-media-user-vector.jpg");;
   const [isEditing, setIsEditing] = useState(false);
   const [newPhoto, setNewPhoto] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
@@ -32,21 +34,25 @@ const Profile = () => {
           const response = await fetch("/api/profile", {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
+            }
+            
           });
           const data = await response.json();
-  
-          console.log("Fetched profile data:", data);  // Log the response to ensure it's correct
+          console.log(data)
           if (data.user) {
-            setProfileData(data.user);  // Ensure you set the profile data correctly
-            setIsLoading(false);  // Set loading to false when data is fetched
-          } else {
-            console.error("User data not found in response:", data);
-            setIsLoading(false);
+            setProfileData(data.user);
+            setPhotoUrl(
+              data.user.profile_photo.startsWith("/uploads/")
+                ? data.user.profile_photo
+                : "https://static.vecteezy.com/system/resources/previews/009/292/244/large_2x/default-avatar-icon-of-social-media-user-vector.jpg"
+            );
+            console.log("User Object:", user);
+            console.log("User Profile Photo:", user?.profile_photo);
           }
         } catch (error) {
           console.error("Error fetching profile:", error);
-          setIsLoading(false);  // Set loading to false in case of an error
+        } finally {
+          setIsLoading(false);
         }
       }
     };
@@ -104,7 +110,11 @@ const Profile = () => {
   
     fetchPaymentMethod();
   }, [isLoggedIn]);
-  
+
+//  const storedPhoto = localStorage.getItem("profile_photo");
+  const profilePhotoUrl = photoUrl.startsWith("/uploads/")
+  ? `${process.env.NEXT_PUBLIC_BASE_URL}${photoUrl}` // Use full URL for uploads
+  : photoUrl || "https://static.vecteezy.com/system/resources/previews/009/292/244/large_2x/default-avatar-icon-of-social-media-user-vector.jpg";  
   const getCardLogo = (cardType: string | null | undefined) => {
     if (!cardType) return cardIcon; // Return a default icon if cardType is null or undefined
     
@@ -179,7 +189,7 @@ const Profile = () => {
             ) : (
               <>
                 <Image
-                  src={photoUrl}
+                  src={profilePhotoUrl}
                   alt="profilePhoto"
                   className={styles.profilePhoto}
                   width={239}
@@ -196,7 +206,9 @@ const Profile = () => {
                   <p>{profileData?.phone_number || "N/A"}</p>
                 </div>
                 </div>
-                <div className={styles.editButton}>Edit</div>
+                
+                <div className={styles.editButton}><Link href={"/profile/account-detail"}>Edit</Link></div>
+                
               </>
             )}
           </div>
@@ -215,7 +227,7 @@ const Profile = () => {
               </div>
               </div>
               </div>
-              <div className={styles.editButton}>Edit</div>
+              <div className={styles.editButton}><Link href={"/profile/account-detail"}>Edit</Link></div>
             </div>
             <div className={styles.shippingAddress}>
               <div className={styles.dataWrapper}>
@@ -252,7 +264,7 @@ const Profile = () => {
                   <p>No shipping addresses found.</p>
                 )}
               </div>
-              <div className={styles.editButton}>Edit</div>
+              <div className={styles.editButton}><Link href={"/profile/shipping-addresses"}>Edit</Link></div>
             </div>
           </div>
           <div className={styles.profile3}>
@@ -310,7 +322,7 @@ const Profile = () => {
                   <span className={styles.value}> {paymentMethod?.card_number ? formatCardNumber(paymentMethod?.card_number) : "N/A"}</span>
                 </div>
               </div>
-              <div className={styles.editButton}>Edit</div>
+              <div className={styles.editButton}><Link href={"/profile/payment-method"}>Edit</Link></div>
             </div>
           </div>
         </div>

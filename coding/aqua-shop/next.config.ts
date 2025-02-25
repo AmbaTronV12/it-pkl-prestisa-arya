@@ -11,6 +11,14 @@ const nextConfig: NextConfig = {
     ];
   },
   images: {
+    remotePatterns: [
+      {
+        protocol: "http",
+        hostname: "localhost",
+        port: "3000", // Ensure it matches your dev server port
+        pathname: "/uploads/**",
+      },
+    ],
     domains: ['static.thcdn.com', 'static.vecteezy.com'], // Corrected hostname without protocol
   },
 };

@@ -30,7 +30,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         { expiresIn: '1h' }               // Token expiry
       );
 
-      res.status(200).json({ message: 'Login successful', token });
+      res.status(200).json({ message: 'Login successful', user: {
+        username: user.username,
+        email: user.email,
+        birth_date: user.birth_date,
+        phone_number: user.phone_number,
+        profile_photo: user.profile_photo, // Make sure this is included
+      }, token });
     } catch (error) {
       console.error('Error in login endpoint:', error);
       res.status(500).json({ error: 'Failed to log in' });

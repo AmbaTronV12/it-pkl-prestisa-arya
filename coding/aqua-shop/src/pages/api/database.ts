@@ -53,7 +53,7 @@ interface ProductRow extends RowDataPacket {
 export async function getUserById(userId: number) {
   try {
     const connection = await mysql.createConnection(dbConfig);
-    const query = `SELECT username, email, birth_date, phone_number FROM users WHERE user_id  = ?`;
+    const query = `SELECT username, email, birth_date, phone_number, profile_photo FROM users WHERE user_id  = ?`;
     const [rows] = await connection.query<UserRow[]>(query, [userId]);
     await connection.end();
 

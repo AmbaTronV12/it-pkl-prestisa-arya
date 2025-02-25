@@ -41,19 +41,22 @@ const Register = () => {
           if (res.ok) {
             // Save token to local storage or cookie
             localStorage.setItem("token", data.token);
-            // Update login with all user properties
+            
+            // Update login with all user properties from the `user` object
             login({
-              username: data.username,
-              email: data.email,
-              phone_number: data.phone_number,
-              birth_date: data.birth_date,
-              profile_photo: data.profile_photo, // Add any additional data here
+              username: data.user.username,
+              email: data.user.email,
+              phone_number: data.user.phone_number,
+              birth_date: data.user.birth_date,
+              profile_photo: data.user.profile_photo, // Correctly access the photo
             }, data.token);
+            
             // Redirect to home or protected page
             router.push("/homepage");
           } else {
             setError(data.error || "Failed to log in. Please try again.");
           }
+          
         } catch (err) {
           console.error("Login error:", err);
           setError("An unexpected error occurred.");

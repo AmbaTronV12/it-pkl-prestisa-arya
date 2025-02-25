@@ -1,0 +1,6 @@
+yang dilakukan: Membuat fitur edit profile
+yang dipahami: 
+kendala: foto profile kembali ke default setelah refresh
+solusi: melakukan perubahan pada function save untuk menghindari pengembalian foto profil ke default setelah refresh.
+
+19/02/2025

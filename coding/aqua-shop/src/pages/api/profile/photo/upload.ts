@@ -1,73 +1,69 @@
-import { NextApiRequest, NextApiResponse } from 'next';
-import { verifyToken, AuthenticatedRequest } from '../../authMiddleware';
-import { updateUserProfilePhoto } from '../../database';
-import formidable from 'formidable';
-import fs from 'fs';
-import path from 'path';
+import { NextApiRequest, NextApiResponse } from "next";
+import { verifyToken, AuthenticatedRequest } from "../../authMiddleware";
+import { updateUserProfilePhoto } from "../../database";
+import formidable from "formidable";
+import fs from "fs";
+import path from "path";
 
 export const config = {
   api: {
-    bodyParser: false, // Required for file uploads, but blocks JSON body parsing
+    bodyParser: false, // Disable body parser for file uploads
   },
 };
 
 export default async function handler(req: AuthenticatedRequest, res: NextApiResponse) {
-  if (req.method === 'POST') {
+  if (req.method === "POST") {
     verifyToken(req, res, async () => {
       try {
-        // **Manually handle JSON body parsing**
-        if (req.headers['content-type'] === 'application/json') {
-          let body = '';
-          req.on('data', (chunk) => {
-            body += chunk;
-          });
-          req.on('end', async () => {
-            try {
-              const { imageUrl } = JSON.parse(body); // Parse JSON body manually
-              if (!imageUrl) {
-                return res.status(400).json({ error: 'No image URL provided' });
-              }
+        console.log("📥 Receiving upload request...");
 
-              // Save the online image URL directly in the database
-              await updateUserProfilePhoto(req.user?.id, imageUrl);
-              return res.status(200).json({ message: 'Profile photo updated successfully', profilePhotoUrl: imageUrl });
-            } catch (error) {
-              return res.status(400).json({ error: 'Invalid JSON format' });
-            }
-          });
-          return;
-        }
-
-        // **Otherwise, handle file uploads using Formidable**
-        const form = new formidable.IncomingForm({
+        const form = formidable({
           multiples: false,
-          uploadDir: path.join(process.cwd(), '/public/uploads'),
+          uploadDir: path.join(process.cwd(), 'public/uploads'), // Save to /public/uploads
           keepExtensions: true,
         });
 
         form.parse(req, async (err, fields, files) => {
           if (err) {
-            return res.status(500).json({ error: 'Error processing file' });
+            console.error("🚨 Error parsing form:", err);
+            return res.status(500).json({ error: "Error processing file" });
           }
 
-          const file = files.profile_photo?.[0]; // Get the uploaded file
+          console.log("✅ Form parsed successfully!", files);
+
+          const file = files.profile_photo?.[0];
 
           if (!file) {
-            return res.status(400).json({ error: 'No file uploaded' });
+            console.error("❌ No file received!");
+            return res.status(400).json({ error: "No file uploaded" });
           }
 
-          const newFilePath = `/uploads/${file.newFilename}`;
-          await updateUserProfilePhoto(req.user?.id, newFilePath);
+          console.log("📂 File received:", file);
 
-          res.status(200).json({ message: 'Profile photo updated successfully', profilePhotoUrl: newFilePath });
+          const uploadDir = path.join(process.cwd(), "public/uploads");
+          if (!fs.existsSync(uploadDir)) {
+            console.log("📁 Creating uploads folder...");
+            fs.mkdirSync(uploadDir, { recursive: true });
+          }
+
+          const newFilePath = path.join(uploadDir, file.newFilename);
+          console.log("🔄 Moving file to:", newFilePath);
+
+          fs.renameSync(file.filepath, newFilePath);
+          const relativePath = `/uploads/${file.newFilename}`;
+          await updateUserProfilePhoto(req.user?.id, relativePath);
+
+          console.log("✅ Upload successful! New profile photo:", relativePath);
+          res.status(200).json({ message: "Profile photo updated successfully", profilePhotoUrl: relativePath });
         });
       } catch (error) {
-        console.error('Error uploading profile photo:', error);
-        res.status(500).json({ error: 'Failed to upload profile photo' });
+        console.error("🔥 Error uploading profile photo:", error);
+        res.status(500).json({ error: "Failed to upload profile photo" });
       }
     });
   } else {
-    res.setHeader('Allow', ['POST']);
+    res.setHeader("Allow", ["POST"]);
     res.status(405).end(`Method ${req.method} Not Allowed`);
   }
 }
+

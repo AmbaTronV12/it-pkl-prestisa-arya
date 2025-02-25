@@ -26,3 +26,5 @@ export {default as emailIcon} from './sms.svg';
 export {default as phonebookIcon} from './external-drive.svg';
 export {default as cardIcon} from './card.svg';
 export {default as cardIcon2} from './card2.svg';
+export {default as imageEditIcon} from './imagedit.svg';
+export {default as editIcon} from './edit.svg';

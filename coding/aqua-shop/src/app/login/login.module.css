@@ -59,9 +59,13 @@
     font-size: 1rem;
     padding: 0.625rem 0;
     padding-right: 0;
+    color: black;
     background-color: white;
-    color: #D2D2D2;
     font-family: var(--roboto);
+}
+
+.inputBar input::placeholder{
+    color: #D2D2D2;
 }
 
 .inputBar img{
