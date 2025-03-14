@@ -3,6 +3,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
 
 interface UserType {
+  user_id: string; // Use the actual property from your backend
   username: string;
   email: string;
   phone_number: string;

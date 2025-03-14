@@ -17,8 +17,16 @@ export default async function handler(req: AuthenticatedRequest, res: NextApiRes
         if (!user) {
           return res.status(404).json({ error: 'User not found' });
         }
+        
+        const profilePhotoUrl = user.profile_photo 
+          ? `${process.env.NEXT_PUBLIC_BASE_URL}${user.profile_photo}`
+          : "";
 
-        res.status(200).json({ user });
+        // Return user data with updated profile_photo URL
+        res.status(200).json({ 
+          ...user, 
+          profile_photo: profilePhotoUrl 
+        });
       } catch (error) {
         console.error('Error fetching profile:', error);
         res.status(500).json({ error: 'Failed to fetch profile' });

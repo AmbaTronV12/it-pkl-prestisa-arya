@@ -20,7 +20,7 @@ const Sidebar = () => {
           <Link href="/profile" className={styles.navLink}>
             Account Home
           </Link>
-          <Link href="/profile/shipping-addresses" className={styles.navLink}>
+          <Link href="/profile/order" className={styles.navLink}>
             Order
           </Link>
         </div>

@@ -514,6 +514,8 @@
 }
 
 .product button{
+    border: none;
+    box-shadow: 0px 2px 4px rgba(136, 144, 194, 0.2), 0px 5px 15px rgba(37, 44, 97, 0.15);
     border-radius: 4px;
     font-family: var(--sans-serif);
     font-size: 0.875rem;
@@ -590,7 +592,7 @@
     padding: 0.625rem;
     padding-right: 0;
     background-color: #ffffff;
-    color: #D2D2D2;
+    color: black;
 }
 
 .InputContainer button{

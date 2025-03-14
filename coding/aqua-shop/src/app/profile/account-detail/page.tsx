@@ -15,8 +15,11 @@ const accountDetail = () => {
     const togglePasswordVisibility = () => {
       setShowPassword(!showPassword);
     };
-    const [photoUrl, setPhotoUrl] = useState(user?.profile_photo?.startsWith("/uploads/")
-    ? user.profile_photo:"https://static.vecteezy.com/system/resources/previews/009/292/244/large_2x/default-avatar-icon-of-social-media-user-vector.jpg");
+    const [photoUrl, setPhotoUrl] = useState(
+      user?.profile_photo && typeof user.profile_photo === "string" 
+        ? user.profile_photo 
+        : "https://static.vecteezy.com/system/resources/previews/009/292/244/large_2x/default-avatar-icon-of-social-media-user-vector.jpg"
+    );      
     const [isEditing, setIsEditing] = useState(false);
     const [newPhoto, setNewPhoto] = useState<File | null>(null);
     const [isUploading, setIsUploading] = useState(false);
@@ -29,52 +32,48 @@ const accountDetail = () => {
   
     useEffect(() => {
       const fetchUserProfile = async () => {
-        if (isLoggedIn) {
-          try {
-            const response = await fetch("/api/profile", {
-              headers: {
-                Authorization: `Bearer ${localStorage.getItem("token")}`,
-              }
-              
-            });
-            const data = await response.json();
-            console.log(data)
-            if (data.user) {
-              setProfileData(data.user);
-              setPhotoUrl(
-                data.user.profile_photo.startsWith("/uploads/")
-                  ? data.user.profile_photo
-                  : "https://static.vecteezy.com/system/resources/previews/009/292/244/large_2x/default-avatar-icon-of-social-media-user-vector.jpg"
-              );
-
-            }
-          } catch (error) {
-            console.error("Error fetching profile:", error);
-          } finally {
-            setIsLoading(false);
+        setIsLoading(true); // Ensure loading starts
+        
+        const storedToken = localStorage.getItem("token");
+      
+        if (!storedToken) {
+          console.warn("No token found. Redirecting to login...");
+          window.location.href = "/login";
+          return;
+        }
+      
+        try {
+          const response = await fetch("/api/profile", {
+            headers: {
+              Authorization: `Bearer ${storedToken}`,
+            },
+          });
+      
+          if (!response.ok) {
+            throw new Error("Failed to fetch user profile.");
           }
+      
+          const data = await response.json();
+      
+          if (!data || typeof data !== "object") {
+            throw new Error("Invalid response data.");
+          }
+      
+          console.log("Fetched user profile:", data); // Debugging log ✅
+      
+          setProfileData(data); // ✅ Fix here
+      
+        } catch (error) {
+          console.error("Error fetching profile:", error);
+        } finally {
+          setIsLoading(false); // Stop loading
         }
       };
-  
+      
+    
       fetchUserProfile();
     }, [isLoggedIn]);
-
-    // After all useState declarations
-  useEffect(() => {
-    if (user?.profile_photo) {
-      setPhotoUrl(
-        user.profile_photo.startsWith("/uploads/")
-          ? user.profile_photo
-          : "https://static.vecteezy.com/system/resources/previews/009/292/244/large_2x/default-avatar-icon-of-social-media-user-vector.jpg"
-      );
-    }
-  }, [user]); // Runs when user object updates
-
-  useEffect(() => {
-    if (user?.profile_photo) {
-      localStorage.setItem("profile_photo", user.profile_photo);
-    }
-  }, [user?.profile_photo]);
+    
   
   
     if (isLoading) {
@@ -89,14 +88,12 @@ const accountDetail = () => {
       setIsEditing(false);
     };
 
-    // const storedPhoto = localStorage.getItem("profile_photo");
-
-    const profilePhotoPath = user?.profile_photo;
-
-    const profilePhotoUrl = photoUrl.startsWith("/uploads/")
-    ? `${process.env.NEXT_PUBLIC_BASE_URL}${photoUrl}` // Use full URL for uploads
-    : photoUrl || "https://static.vecteezy.com/system/resources/previews/009/292/244/large_2x/default-avatar-icon-of-social-media-user-vector.jpg";
-
+    const profilePhotoUrl = profileData?.profile_photo 
+  ? (profileData.profile_photo.startsWith("/") 
+      ? `${process.env.NEXT_PUBLIC_BASE_URL}${profileData.profile_photo}`
+      : profileData.profile_photo
+    ) 
+  : "https://static.vecteezy.com/system/resources/previews/009/292/244/large_2x/default-avatar-icon-of-social-media-user-vector.jpg";
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       console.log(`Typing: ${e.target.name} = ${e.target.value}`);
@@ -108,8 +105,11 @@ const accountDetail = () => {
     const handleSave = async () => {
       // Filter out empty fields from formData
       const filteredFormData = Object.fromEntries(
-        Object.entries(formData).filter(([_, value]) => value.trim() !== "")
+        Object.entries(formData).filter(([key, value]) => 
+          typeof value === "string" ? value.trim() !== "" : value !== null
+        )
       );
+      
       try {
         const response = await fetch("/api/profile/update", {
           method: "PATCH",
@@ -219,7 +219,7 @@ const accountDetail = () => {
               <div className={styles.editContainer}>
               <span>Birth Date</span>
                 <div className={styles.inputBar}>
-                 <input placeholder="Birth Date" type="date" name="birth date" value={formData.birth_date} onChange={handleChange}/>
+                  <input placeholder="Birth Date" type="date" name="birth_date" value={formData.birth_date} onChange={handleChange}/>
                 </div>
               </div>
               <div className={styles.saveButton} onClick={handleSave}>Save Change</div>

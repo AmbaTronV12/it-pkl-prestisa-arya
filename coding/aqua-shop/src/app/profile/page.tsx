@@ -15,69 +15,90 @@ const Profile = () => {
   const [profileData, setProfileData] = useState<any>(null);
   const [photoUrl, setPhotoUrl] = useState(user?.profile_photo?.startsWith("/uploads/")
   ? user.profile_photo:"https://static.vecteezy.com/system/resources/previews/009/292/244/large_2x/default-avatar-icon-of-social-media-user-vector.jpg");;
-  const [isEditing, setIsEditing] = useState(false);
-  const [newPhoto, setNewPhoto] = useState<File | null>(null);
-  const [isUploading, setIsUploading] = useState(false);
-  const [updatedData, setUpdatedData] = useState({
-    username: user?.username || "",
-    email: user?.email || "",
-    phone_number: user?.phone_number || "",
-    birth_date: user?.birth_date || "",
-  });
   const [isLoading, setIsLoading] = useState(true); // New state to handle loading
 
   // Fetch user profile data
   useEffect(() => {
-    const fetchUserProfile = async () => {
-      if (isLoggedIn) {
-        try {
-          const response = await fetch("/api/profile", {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            }
-            
-          });
-          const data = await response.json();
-          console.log(data)
-          if (data.user) {
-            setProfileData(data.user);
-            setPhotoUrl(
-              data.user.profile_photo.startsWith("/uploads/")
-                ? data.user.profile_photo
-                : "https://static.vecteezy.com/system/resources/previews/009/292/244/large_2x/default-avatar-icon-of-social-media-user-vector.jpg"
-            );
-            console.log("User Object:", user);
-            console.log("User Profile Photo:", user?.profile_photo);
+        const fetchUserProfile = async () => {
+          setIsLoading(true); // Ensure loading starts
+          
+          const storedToken = localStorage.getItem("token");
+        
+          if (!storedToken) {
+            console.warn("No token found. Redirecting to login...");
+            window.location.href = "/login";
+            return;
           }
-        } catch (error) {
-          console.error("Error fetching profile:", error);
-        } finally {
-          setIsLoading(false);
-        }
-      }
-    };
-  
-    fetchUserProfile();
-  }, [isLoggedIn]);
+        
+          try {
+            const response = await fetch("/api/profile", {
+              headers: {
+                Authorization: `Bearer ${storedToken}`,
+              },
+            });
+        
+            if (!response.ok) {
+              throw new Error("Failed to fetch user profile.");
+            }
+        
+            const data = await response.json();
+        
+            if (!data || typeof data !== "object") {
+              throw new Error("Invalid response data.");
+            }
+        
+            console.log("Fetched user profile:", data); // Debugging log ✅
+        
+            setProfileData(data); // ✅ Fix here
+        
+          } catch (error) {
+            console.error("Error fetching profile:", error);
+          } finally {
+            setIsLoading(false); // Stop loading
+          }
+        };
+        
+      
+        fetchUserProfile();
+      }, [isLoggedIn]);
 
   useEffect(() => {
     const fetchShippingAddresses = async () => {
-      if (isLoggedIn) {
-        try {
-          const response = await fetch("/api/profile/shipping", {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          });
-          const data = await response.json();
-          if (response.ok && data.length > 0) {
-            setShippingAddresses(data);
-          } else {
-            console.error("No shipping addresses found.");
-          }
-        } catch (error) {
-          console.error("Error fetching shipping addresses:", error);
+      const storedToken = localStorage.getItem("token");
+    
+      if (!storedToken) {
+        console.warn("No token found. Redirecting to login...");
+        window.location.href = "/login"; // Redirect user to login page
+        return;
+      }
+    
+      if (!isLoggedIn) return; // Prevent unnecessary API calls if not logged in
+    
+      try {
+        setIsLoading(true); // Set loading state before making request
+    
+        const response = await fetch("/api/profile/shipping", {
+          headers: {
+            Authorization: `Bearer ${storedToken}`,
+          },
+        });
+    
+        const data = await response.json();
+    
+        if (!response.ok) {
+          throw new Error(data.message || "Failed to fetch shipping addresses.");
         }
+    
+        if (Array.isArray(data) && data.length > 0) {
+          setShippingAddresses(data);
+        } else {
+          console.warn("No shipping addresses found.");
+          setShippingAddresses([]); // Ensure state is updated
+        }
+      } catch (error) {
+        console.error("Error fetching shipping addresses:", error);
+      } finally {
+        setIsLoading(false); // Ensure loading state is turned off
       }
     };
     fetchShippingAddresses();
@@ -112,9 +133,13 @@ const Profile = () => {
   }, [isLoggedIn]);
 
 //  const storedPhoto = localStorage.getItem("profile_photo");
-  const profilePhotoUrl = photoUrl.startsWith("/uploads/")
-  ? `${process.env.NEXT_PUBLIC_BASE_URL}${photoUrl}` // Use full URL for uploads
-  : photoUrl || "https://static.vecteezy.com/system/resources/previews/009/292/244/large_2x/default-avatar-icon-of-social-media-user-vector.jpg";  
+const profilePhotoUrl = profileData?.profile_photo 
+? (profileData.profile_photo.startsWith("/") 
+    ? `${process.env.NEXT_PUBLIC_BASE_URL}${profileData.profile_photo}`
+    : profileData.profile_photo
+  ) 
+: "https://static.vecteezy.com/system/resources/previews/009/292/244/large_2x/default-avatar-icon-of-social-media-user-vector.jpg";
+
   const getCardLogo = (cardType: string | null | undefined) => {
     if (!cardType) return cardIcon; // Return a default icon if cardType is null or undefined
     
@@ -137,45 +162,8 @@ const Profile = () => {
     return dateObj.toLocaleDateString('en-US', options); // Returns date like "10/28"
   };
 
-  // Handle file change for photo upload
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setNewPhoto(e.target.files[0]);
-    }
-  };
-
   // Handle profile photo upload
-  const handlePhotoUpload = async () => {
-    if (!newPhoto) return;
-
-    const formData = new FormData();
-    formData.append("profilePhoto", newPhoto);
-
-    setIsUploading(true);
-
-    try {
-      const response = await fetch("/api/profile/photo/upload", {
-        method: "POST",
-        body: formData,
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setPhotoUrl(data.imageUrl); // Update the displayed photo
-        setIsEditing(false);
-        setNewPhoto(null);
-
-        // Update the user context with the new photo
-        login({ ...user!, profile_photo: data.imageUrl }, localStorage.getItem("token") || "");
-      } else {
-        console.error("Failed to upload photo");
-      }
-    } catch (error) {
-      console.error("Error uploading photo:", error);
-    } finally {
-      setIsUploading(false);
-    }
-  };
+  
   console.log(getCardLogo(paymentMethod?.card_type));  // Check what URL is being returned
   return (
     <div className={styles.page}>

@@ -13,7 +13,6 @@ export default async function handler(req: AuthenticatedRequest, res: NextApiRes
         const addresses = await getShippingAddresses(req.user.id);
 
         if (Array.isArray(addresses) && addresses.length > 0) {
-          console.log("Fetched addresses from DB:", addresses);
           return res.status(200).json(addresses);
         }
 

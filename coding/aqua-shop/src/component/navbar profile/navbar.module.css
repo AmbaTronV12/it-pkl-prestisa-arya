@@ -17,7 +17,7 @@
     font-weight: inherit;
   }
 
-  .navbar h2{
+  .navbar link{
     font-size: 1rem;
   }
   
@@ -39,6 +39,12 @@
     padding: 0.5rem 1rem;
     width: 29.375rem; /* Adjust width as needed */
     grid-column: 3;
+  }
+
+  .searchBar button{
+    border: none;
+    background-color: #F6F6F6;
+    cursor: pointer;
   }
   
   .searchInput {
@@ -75,7 +81,7 @@
     padding: 0.625rem;
   }
 
-  .links h2{
+  .links link{
     cursor: pointer;
   }
   

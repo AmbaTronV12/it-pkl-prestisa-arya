@@ -10,6 +10,7 @@
 }
 
 .accountDetail{
+    align-self: flex-start;
     display: flex;
     flex-direction: column;
     width: 59.25rem;
@@ -120,6 +121,7 @@
     font-size: 0.875rem;
     border-radius: 4px;
     box-shadow: 0px 2px 4px rgba(136, 144, 194, 0.2), 0px 5px 15px rgba(37, 44, 97, 0.15);
+    cursor: pointer;
 }
 
 .editContainer{

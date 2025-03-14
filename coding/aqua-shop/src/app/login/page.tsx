@@ -44,6 +44,7 @@ const Register = () => {
             
             // Update login with all user properties from the `user` object
             login({
+              user_id: data.user.user_id,
               username: data.user.username,
               email: data.user.email,
               phone_number: data.user.phone_number,

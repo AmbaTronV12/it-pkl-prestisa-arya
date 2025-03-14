@@ -1,5 +1,6 @@
-import mysql, { RowDataPacket } from 'mysql2/promise';
+import mysql, { RowDataPacket, ResultSetHeader } from 'mysql2/promise';
 import bcrypt from 'bcrypt';
+import dayjs from "dayjs";
 import { hash } from 'crypto';
 //settingan buat connect
 const dbConfig = {
@@ -363,6 +364,94 @@ export async function getProductById(productId: number): Promise<Product | null>
     throw new Error('Failed to fetch product');
   }
 }
+
+//related products
+export async function getRelatedProducts(subcategory: string, excludeId: number): Promise<Product[]> {
+  try {
+    const connection = await mysql.createConnection(dbConfig);
+    const [rows] = await connection.query<ProductRow[]>(
+      `SELECT * FROM product WHERE subcategory = ? AND product_id != ? LIMIT 4`,
+      [subcategory, excludeId]
+    );
+    await connection.end();
+
+    return rows.map((row) => ({
+      product_id: row.product_id,
+      product_name: row.product_name,
+      product_price: row.product_price,
+      product_desc: row.product_desc,
+      product_image: JSON.parse(row.product_image as string), // Convert JSON string to object
+      category: row.category,
+      subcategory: row.subcategory,
+    }));
+  } catch (error) {
+    console.error("Error fetching related products:", error);
+    throw new Error("Failed to fetch related products");
+  }
+}
+
+
+// add history
+export async function addOrderHistory(
+  userId: number,
+  productId: number,
+  productName: string,
+  productImage: string,
+  category: string,
+  totalPrice: number,
+  quantity: number
+) {
+  try {
+    const connection = await mysql.createConnection(dbConfig);
+    const query = `
+      INSERT INTO orders (user_id, product_id, product_name, product_image, category, total_price, quantity, order_date)
+      VALUES (?, ?, ?, ?, ?, ?, ?, NOW())
+    `;
+    await connection.execute(query, [
+      userId,
+      productId,
+      productName,
+      productImage,
+      category,
+      totalPrice,
+      quantity,
+    ]);
+    await connection.end();
+  } catch (error) {
+    console.error("Error adding order history:", error);
+    throw new Error("Failed to add order history");
+  }
+}
+
+// get history
+export async function getOrderHistory(userId: number) {
+  try {
+    const connection = await mysql.createConnection(dbConfig);
+    const query = `SELECT * FROM orders WHERE user_id = ? ORDER BY order_date DESC`;
+    const [rows] = await connection.execute(query, [userId]);
+    await connection.end();
+    return rows;
+  } catch (error) {
+    console.error("Error fetching order history:", error);
+    throw new Error("Failed to fetch order history");
+  }
+}
+
+// Query function to delete old orders (older than 14 days)
+
+export async function query(sql: string, values: any[] = []) {
+  const connection = await mysql.createConnection(dbConfig);
+  try {
+    const [result] = await connection.execute(sql, values);
+    return result;
+  } catch (error) {
+    console.error("❌ Database Query Error:", error);
+    throw error;
+  } finally {
+    await connection.end();
+  }
+}
+
 
 
 // --- Authentication Functions ---

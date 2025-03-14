@@ -7,7 +7,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return;
   }
 
-  const { category, subcategory } = req.query;
+  const { category } = req.query;
 
   if (!category || typeof category !== 'string') {
     res.status(400).json({ error: 'Category is required and must be a string' });

@@ -8,3 +8,171 @@
     display: flex;
     flex-direction: row;
 }
+
+.shippingAddress{
+    align-self: flex-start;
+    display: flex;
+    flex-direction: column;
+    width: 59.25rem;
+    padding: 2.563rem 2.813rem 3.188rem 2.438rem;
+    margin: 2.625rem 8rem;
+    border: 1px solid #C1C1C1;
+}
+
+.shippingAddress p{
+    font-family: var(--sans-serif);
+    font-size: 1.125rem;
+    letter-spacing: 0.194rem;
+    font-weight: 600;
+    margin-bottom: 1.313rem;
+}
+
+.addressContainer{
+    display: flex;
+    flex-direction: column;
+}
+
+.dataWrapper{
+    display: flex;
+    flex-direction: column;
+    gap: 0.875rem;
+}
+
+.dataContainer{
+    display: flex;
+    justify-content: space-between;
+}
+
+.label{
+    font-family: var(--sans-serif);
+    font-size: 1.125rem;
+    color: #5A5A5A;
+    letter-spacing: 0.125rem;
+    font-weight: 500;
+
+}
+.value{
+    font-family: var(--sans-serif);
+    font-size: 1.125rem;
+    color: black;
+    font-weight: 500;
+    letter-spacing: 0.125rem;
+}
+
+.buttonContainer{
+    display: flex;
+    flex-direction: row;
+    gap: 1.25rem;
+    margin-top: 2rem;
+}
+
+.buttonContainer .editButton, .buttonContainer .deleteButton{
+    margin-top: 0;
+}
+
+.editButton{
+    display: flex;
+    justify-content: center;
+    margin-top: 2rem;
+    align-self: flex-start;
+    background-color: white;
+    color: var(--main-color);
+    padding: 0.813rem 2.094rem;
+    font-family: var(--sans-serif);
+    font-size: 0.875rem;
+    border-radius: 4px;
+    box-shadow: 0px 2px 4px rgba(136, 144, 194, 0.2), 0px 5px 15px rgba(37, 44, 97, 0.15);
+    cursor: pointer;
+}
+
+.deleteButton{
+    display: flex;
+    justify-content: center;
+    margin-top: 2rem;
+    align-self: flex-start;
+    background-color: white;
+    color: var(--main-color);
+    padding: 0.813rem 2.094rem;
+    font-family: var(--sans-serif);
+    font-size: 0.875rem;
+    border-radius: 4px;
+    box-shadow: 0px 2px 4px rgba(136, 144, 194, 0.2), 0px 5px 15px rgba(37, 44, 97, 0.15);
+    cursor: pointer;
+}
+
+.cancel{
+    display: inline-block;
+    margin-top: 5.5rem;
+    text-decoration: underline;
+    font-family: var(--sans-serif);
+    font-weight: 600;
+    font-size: 0.875rem;
+    cursor: pointer;
+}
+
+.addressWrapper{
+    display: flex;
+    flex-direction: column;
+    gap:1.25rem
+}
+
+.address1{
+    display: flex;
+    flex-direction: column;
+}
+
+.address2{
+    display: flex;
+    gap: 1.25rem;
+}
+
+.address2 .editContainer {
+    flex: 1; /* Each container takes 50% of the width */
+}
+
+.address3 {
+    display: flex;
+    gap: 1.25rem;
+}
+
+.address3 .editContainer:first-child {
+    flex: 7; /* 70% width */
+}
+
+.address3 .editContainer:last-child {
+    flex: 3; /* 30% width */
+}
+
+.editContainer{
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.editContainer span{
+    font-family: var(--roboto);
+    font-size: 1rem;
+    letter-spacing: 0.1rem;
+    font-weight: 600;
+}
+
+.editContainer input{
+    flex: 1;
+    border: none;
+    outline: none;
+    font-size: 1rem;
+    color: black;
+    background-color: white;
+    font-family: var(--roboto);
+    width: 100%;
+}
+
+.editContainer input::placeholder{
+    color: #D2D2D2;
+}
+
+.inputBar{
+    border: 1px solid #E2E1E5;
+    border-radius: 5px;
+    padding: 1rem 0.938rem;
+}
